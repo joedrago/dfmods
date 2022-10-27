@@ -1,0 +1,7 @@
+## Interface: 100000
+## Title: GoAway
+## Notes: Hides stuff in the default UI that I don't want to see.
+## Version: 1.0
+## Author: Monza
+GoAway.lua
+GoAway.xml
