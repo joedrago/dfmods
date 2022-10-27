@@ -1,0 +1,6 @@
+## Interface: 100000
+## Title: Quack
+## Notes: Makes a quack noise when someone dies.
+## Version: 1.0
+## Author: Monza
+Quack.lua
