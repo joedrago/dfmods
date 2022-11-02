@@ -1,0 +1,6 @@
+## Interface: 100000
+## Author: albin
+## Title: Undress Button
+## Notes: Easily remove gear from dressing room model
+## Version: 10.0.0
+UndressButton.xml
