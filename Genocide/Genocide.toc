@@ -1,0 +1,6 @@
+## Interface: 100000
+## Title: Genocide
+## Notes: Genocide v1
+## Author: Monza
+## Version: 0.1
+Genocide.lua
