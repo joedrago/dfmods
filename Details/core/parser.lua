@@ -4941,8 +4941,8 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 			_is_in_instance = true
 
 			if (DetailsFramework.IsDragonflight()) then
-				Details:Msg("friendly reminder to enabled combat logs (/combatlog) if you're recording them (Dragonflight Beta).")
-				Details:Msg("and if you wanna help, you may post them on Details! discord as well.")
+				-- Details:Msg("friendly reminder to enabled combat logs (/combatlog) if you're recording them (Dragonflight Beta).")
+				-- Details:Msg("and if you wanna help, you may post them on Details! discord as well.")
 			end
 		end
 
