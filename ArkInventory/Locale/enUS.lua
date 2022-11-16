@@ -244,6 +244,7 @@ if not L then return end
 	L["CONFIG"] = "Config"
 	L["CONFIG_DESC"] = "Configuration Options"
 	L["CONFIG_IS_PER_CHARACTER"] = "\n\nNote - This option is per character so its setting only applies to %1$s."
+	L["CONFIG_IS_CVAR"] = "\n\nNote - This option is a global CVAR and will apply to all characters."
 	
 --	configuration options > system
 	L["CONFIG_GENERAL_DESC"] = "Display Options"
@@ -256,7 +257,6 @@ if not L then return end
 	L["CONFIG_GENERAL_REPOSITION_ONSHOW"] = "Reposition on Show"
 	L["CONFIG_GENERAL_REPOSITION_ONSHOW_DESC"] = "If a window is off screen this will reposition it back on screen when it is re-opened"
 	
-	L["CONFIG_SORTING_WHEN"] = "When"
 	L["CONFIG_SORTING_WHEN_DESC"] = "When to re-sort the windows"
 	L["CONFIG_SORTING_WHEN_INSTANT"] = "Instantly"
 	L["CONFIG_SORTING_WHEN_INSTANT_DESC"] = "Re-Sorting will occur after every item change"
@@ -527,8 +527,8 @@ if not L then return end
 	L["CONFIG_DESIGN_ITEM_OVERLAY_PROFESSIONRANK_COLOUR_DESC"] = "Set the colour of the %1$s"
 	
 	L["CONFIG_DESIGN_ITEM_COOLDOWN_SHOW_DESC"] = "Display cooldowns"
-	L["CONFIG_DESIGN_ITEM_COOLDOWN_GLOBAL"] = "Update on GCD"
-	L["CONFIG_DESIGN_ITEM_COOLDOWN_GLOBAL_DESC"] = "Refresh the window to show cooldowns when a Global Cooldown event is triggered"
+	L["CONFIG_DESIGN_ITEM_COOLDOWN_NUMBER"] = COUNTDOWN_FOR_COOLDOWNS_TEXT
+	L["CONFIG_DESIGN_ITEM_COOLDOWN_NUMBER_DESC"] = "Show the remaining cooldown as a number"
 	L["CONFIG_DESIGN_ITEM_COOLDOWN_COMBAT"] = "Refresh in combat"
 	L["CONFIG_DESIGN_ITEM_COOLDOWN_COMBAT_DESC"] = "Refresh the window to show cooldowns while in combat, or wait until combat has ended"
 	
@@ -567,36 +567,45 @@ if not L then return end
 	L["CONFIG_DESIGN_ITEM_EMPTY_POSITION_DESC"] = "how empty slots should be positioned when sorted"
 	
 	
--- junk
-	L["CONFIG_JUNK_SELL_BINDING"] = "Sell Junk Items"
-	L["CONFIG_JUNK_SELL_BINDING_AUTO"] = "[Automatic]"
-	L["CONFIG_JUNK_SELL_BINDING_MANUAL"] = "[Manual]"
-	L["CONFIG_JUNK_SELL_AUTO"] = "Auto Sell"
-	L["CONFIG_JUNK_SELL_AUTO_DESC"] = "Sell all junk items as soon as you open a merchant window"
-	L["CONFIG_JUNK_SELL_CANDESTROY"] = "You have %s items that can be destroyed, please use the manual keybinding to destroy them"
-	L["CONFIG_JUNK_NOTIFY_SOLD"] = "Sold your junk items for %s."
-	L["CONFIG_JUNK_NOTIFY_DESTROYED"] = "Destroyed %s junk items."
-	L["CONFIG_JUNK_NOTIFY_LIMIT"] = "Exiting automatic sell due to buyback limit (%s) being reached."
-	L["CONFIG_JUNK_LIMIT"] = "Limit to Buyback"
-	L["CONFIG_JUNK_LIMIT_DESC"] = "As a safety precaution stop selling your junk items when the buyback limit (%i) is reached"
-	L["CONFIG_JUNK_DELETE_DESC"] = "Delete items that cannot be vendored (have no sell price)\n\nnote - you can only delete items via the keybinding, and only one item at a time"
-	L["CONFIG_JUNK_NOTIFY_DESC"] = "Display a notification about how much gold you sold your items for"
-	L["CONFIG_JUNK_QUALITY_CUTOFF_DESC"] = "Only sell/destroy an item if its quality is at or below: %s%s|r"
-	L["CONFIG_JUNK_CATEGORY_DESC"] = "Automatically sells all items assigned to %s when you talk to a vendor"
-	L["CONFIG_JUNK_LIST_DESC"] = "Display a notification for each item that is sold or destroyed."
-	L["CONFIG_JUNK_LIST_SELL_DESC"] = "Sold: %s x %s for %s"
-	L["CONFIG_JUNK_LIST_DESTROY_DESC"] = "Destroyed: %s x %s"
-	L["CONFIG_JUNK_LIST_DESTROY_LIMIT"] = "You have %s more items that could not be destroyed as you can only destroy one item per keypress"
-	L["CONFIG_JUNK_TESTMODE"] = "Test Mode"
-	L["CONFIG_JUNK_TESTMODE_DESC"] = "When this option is enabled no items are actually sold or destroyed.\n\nUse with the List option to see what would normally get sold or destroyed."
-	L["CONFIG_JUNK_TESTMODE_ALERT_SOLD"] = "Test mode is enabled, no items were actually sold."
-	L["CONFIG_JUNK_TESTMODE_ALERT_DESTROYED"] = "Test mode is enabled, no items were actually destroyed."
-	L["CONFIG_JUNK_TIMER_DESC"] = "the number of millseconds to wait before processing the next item"
-	L["CONFIG_JUNK_PROCESSING_DISABLED_DESC"] = "All junk selling options have been disabled due to the %s addon being loaded"
-	L["CONFIG_JUNK_SOULBOUND_ALREADY_KNOWN_DESC"] = "Categorise any soulbound item (typically recipes), that you already know, as junk"
-	L["CONFIG_JUNK_SOULBOUND_EQUIPMENT_DESC"] = "Categorise any soulbound equipable item, that you cannot use, as junk"
-	L["CONFIG_JUNK_SOULBOUND_ITEMLEVEL_DESC"] = "Ignore item level requirement on equipment for junk purposes"
-	L["CONFIG_JUNK_COMBAT_DESC"] = "When enabled will keep selling/destroying while in combat"
+-- actions
+	L["CONFIG_ACTION"] = "Actions"
+	L["CONFIG_ACTION_TYPE"] = "%s: %s - %s"
+	L["CONFIG_ACTION_TYPE_DESC"] = "Set the action type for %s to %s"
+	L["CONFIG_ACTION_WHEN_DESC"] = "Set when the action for %s runs to %s"
+	
+	L["CONFIG_ACTION_MANUAL_RUN"] = "Manual Action (Vendor, Mail)"
+	
+	L["CONFIG_ACTION_VENDOR_SELL"] = "Sell junk items"
+	L["CONFIG_ACTION_VENDOR_SELL_AUTO"] = "Auto sell"
+	L["CONFIG_ACTION_VENDOR_SELL_AUTO_DESC"] = "Process all junk action items as soon as you open a vendor"
+	L["CONFIG_ACTION_VENDOR_SELL_LIMIT"] = "Limit to Buyback"
+	L["CONFIG_ACTION_VENDOR_SELL_LIMIT_DESC"] = "As a safety precaution stop selling your junk items when the buyback limit (%i) is reached"
+	L["CONFIG_ACTION_VENDOR_SELL_LIMIT_ABORT"] = "Processing aborted due to buyback limit (%s) being reached."
+	L["CONFIG_ACTION_VENDOR_SELL_TEST"] = "Test mode is enabled, no items were actually sold."
+	L["CONFIG_ACTION_VENDOR_SOLD"] = "Sold your junk items for %s."
+	L["CONFIG_ACTION_VENDOR_SOLD_DESC"] = "Display a notification about how much gold you sold your items for"
+	L["CONFIG_ACTION_VENDOR_QUALITY_CUTOFF_DESC"] = "Only sell/destroy an item if its quality is at or below: %s%s|r"
+	L["CONFIG_ACTION_VENDOR_LIST_DESC"] = "Display a notification for each item that is sold or destroyed."
+	L["CONFIG_ACTION_VENDOR_LIST_SELL_DESC"] = "Sold: %s x %s for %s"
+	L["CONFIG_ACTION_VENDOR_TIMER_DESC"] = "the number of millseconds to wait before processing the next item"
+	L["CONFIG_ACTION_VENDOR_COMBAT_DESC"] = "When enabled will keep selling/destroying while in combat"
+	
+	L["CONFIG_ACTION_VENDOR_DESTROY"] = "Destroy junk items"
+	L["CONFIG_ACTION_VENDOR_DESTROY_DESC"] = "Delete items that cannot be vendored (have no sell price)\n\nnote - you can only delete items via the keybinding, and only one item at a time, or by right clicking on the item when at a vendor."
+	L["CONFIG_ACTION_VENDOR_DESTROY_LIST"] = "Destroyed: %s x %s"
+	L["CONFIG_ACTION_VENDOR_DESTROY_MORE"] = "You have %s more item(s) that can be destroyed."
+	L["CONFIG_ACTION_VENDOR_DESTROY_TEST"] = "Test mode is enabled, no items were actually destroyed."
+	
+	L["CONFIG_ACTION_VENDOR_TESTMODE"] = "Test Mode"
+	L["CONFIG_ACTION_VENDOR_TESTMODE_DESC"] = "When this option is enabled no items are actually sold or destroyed.\n\nUse with the List option to see what would normally get sold or destroyed."
+	L["CONFIG_ACTION_VENDOR_PROCESSING_DISABLED_DESC"] = "All junk selling options have been disabled due to the %s addon being loaded"
+	L["CONFIG_ACTION_VENDOR_SOULBOUND_ALREADY_KNOWN_DESC"] = "Categorise any soulbound item (typically recipes), that you already know, as junk"
+	L["CONFIG_ACTION_VENDOR_SOULBOUND_EQUIPMENT_DESC"] = "Categorise any soulbound equipable item, that you cannot use, as junk"
+	L["CONFIG_ACTION_VENDOR_SOULBOUND_ITEMLEVEL_DESC"] = "Ignore item level requirement on equipment for junk purposes"
+	
+	L["CONFIG_ACTION_MAIL_SEND"] = "Send items"
+	L["CONFIG_ACTION_MAIL_SEND_AUTO"] = "Auto send"
+	L["CONFIG_ACTION_MAIL_SEND_AUTO_DESC"] = "Process all mail action items as soon as you open a mailbox"
 	
 	
 -- sorting
@@ -893,6 +902,7 @@ if not L then return end
 	L["SIZE"] = "Size"
 	L["AZERITE"] = "Azerite"
 	L["COSMETIC"] = COSMETIC or ITEM_COSMETIC or "Cosmetic"
+	L["WHEN"] = "When"
 	
 	
 -- libdatabroker

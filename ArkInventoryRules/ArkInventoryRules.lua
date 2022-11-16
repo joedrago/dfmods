@@ -229,7 +229,7 @@ function ArkInventoryRules.AppliesToItem( i )
 	
 	for cat_num in ArkInventory.spairs( r, function( a, b ) return ( r[a].order or 9999 ) < ( r[b].order or 9999 ) end ) do
 		
-		rp = codex.catset.category.active[cat_type][cat_num]
+		rp = codex.catset.ca[cat_type][cat_num].active
 		ra = r[cat_num]
 		
 		if rp and ra and ra.used == "Y" and not ra.damaged then
@@ -1186,7 +1186,7 @@ function ArkInventoryRules.System.boolean_outfit_blizzard( ... )
 					
 					loc_id, bag_id = ArkInventory.BlizzardBagIdToInternalId( bag )
 					slot_id = slot
-					id = GetContainerItemID( bag, slot )
+					id = ArkInventory.CrossClient.GetContainerItemID( bag, slot )
 					
 					--ArkInventory.Output( setname, ":", k, " -> [bag] [", loc_id, ".", bag_id, ".", slot_id, "] [", id, "] = ", location )
 					
@@ -1443,18 +1443,21 @@ function ArkInventoryRules.System.boolean_location( ... )
 	
 end
 
-function ArkInventoryRules.System.boolean_usable( )
+function ArkInventoryRules.System.boolean_usable( ignore_known, ignore_level )
 	
 	if not ArkInventoryRules.Object.h then
 		return false
 	end
 	
-	ArkInventory.TooltipSetHyperlink( ArkInventoryRules.Tooltip, ArkInventoryRules.Object.h )
-	return ArkInventory.TooltipCanUse( ArkInventoryRules.Tooltip )
+	local ignore_known = not not ignore_known
+	local ignore_level = not not ignore_level
+	
+	ArkInventory.ScanTooltipSet( ArkInventoryRules.Tooltip, nil, nil, nil, ArkInventoryRules.Object.h )
+	return ArkInventory.TooltipCanUse( ArkInventoryRules.Tooltip, nil, ignore_known, ignore_level )
 	
 end
 
-function ArkInventoryRules.System.internal_unwearable( wearable )
+function ArkInventoryRules.System.internal_unwearable( wearable, ignore_known, ignore_level )
 	
 	if not ArkInventoryRules.Object.h then
 		return false
@@ -1465,8 +1468,8 @@ function ArkInventoryRules.System.internal_unwearable( wearable )
 		return false
 	end
 	
-	-- is there any red text making it unwearable?
-	if not ArkInventoryRules.System.boolean_usable( ) then
+	-- is there any red text making it unwearable?  ignoring already known and player level requirements
+	if not ArkInventoryRules.System.boolean_usable( ignore_known, ignore_level ) then
 		if wearable then
 			--ArkInventory.Output( "wearable fail 1: ", ArkInventoryRules.Object.h )
 			return false
@@ -1539,12 +1542,12 @@ function ArkInventoryRules.System.internal_unwearable( wearable )
 	
 end
 
-function ArkInventoryRules.System.boolean_unwearable( )
-	return ArkInventoryRules.System.internal_unwearable( )
+function ArkInventoryRules.System.boolean_unwearable( ignore_level )
+	return ArkInventoryRules.System.internal_unwearable( false, true, ignore_level )
 end
 
-function ArkInventoryRules.System.boolean_wearable( )
-	return ArkInventoryRules.System.internal_unwearable( true )
+function ArkInventoryRules.System.boolean_wearable( ignore_level )
+	return ArkInventoryRules.System.internal_unwearable( true, true, ignore_level )
 end
 
 function ArkInventoryRules.System.boolean_count( ... )
@@ -1593,7 +1596,7 @@ function ArkInventoryRules.System.boolean_junk( )
 		return false
 	end
 	
-	return ArkInventory.JunkCheck( ArkInventoryRules.Object, nil )
+	return ArkInventory.Action.Vendor.Check( ArkInventoryRules.Object, nil, true ) -- FIX ME, pretty sure i need to pass the codex in
 	
 end
 
@@ -3110,9 +3113,9 @@ function ArkInventoryRules.SetObject( tbl )
 	if i.h then
 		
 		if i.test_rule then
-			ArkInventory.TooltipSetHyperlink( ArkInventoryRules.Tooltip, i.h )
+			ArkInventory.ScanTooltipSet( ArkInventoryRules.Tooltip, nil, nil, nil, i.h )
 		else
-			ArkInventory.TooltipSetItem( ArkInventoryRules.Tooltip, i.loc_id, i.bag_id, i.slot_id, i.h, i )
+			ArkInventory.ScanTooltipSet( ArkInventoryRules.Tooltip, i.loc_id, i.bag_id, i.slot_id, i.h, i )
 		end
 		
 		if not ArkInventory.TooltipIsReady( ArkInventoryRules.Tooltip ) then

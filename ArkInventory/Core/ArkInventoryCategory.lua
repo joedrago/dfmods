@@ -735,7 +735,7 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	
 	
 	-- setup tooltip for scanning.  it will be ready as we've already checked
-	ArkInventory.TooltipSetItem( ArkInventory.Global.Tooltip.Scan, i.loc_id, i.bag_id, i.slot_id, i.h, i )
+	ArkInventory.ScanTooltipSet( ArkInventory.Global.Tooltip.Scan, i.loc_id, i.bag_id, i.slot_id, i.h, i )
 	
 	-- if enabled - already known soulbound items are junk (tooltip)
 	if ArkInventory.db.option.junk.soulbound.known then --and not ArkInventory.Global.Location[i.loc_id].isOffline
@@ -825,6 +825,38 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_EQUIPMENT_COSMETIC" )
 	end
 	
+	-- misc (pets)
+	if ( info.itemtypeid == ArkInventory.Const.ENUM.ITEMCLASS.MISC.PARENT and info.itemsubtypeid == ArkInventory.Const.ENUM.ITEMCLASS.MISC.PET ) or ArkInventory.PT_ItemInSets( i.h, "ArkInventory.System.Pet" ) then
+		if ArkInventory.IsBound( i.sb ) then
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION_BOUND" )
+		else
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION_TRADE" )
+		end
+	end
+	
+	-- battle pet as an item
+	if info.itemtypeid == ArkInventory.Const.ENUM.ITEMCLASS.BATTLEPET.PARENT then
+		if ArkInventory.IsBound( i.sb ) then
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_BATTLE_BOUND" )
+		else
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_BATTLE_TRADE" )
+		end
+	end
+	
+	-- misc (mount)
+	if ( info.itemtypeid == ArkInventory.Const.ENUM.ITEMCLASS.MISC.PARENT and info.itemsubtypeid == ArkInventory.Const.ENUM.ITEMCLASS.MISC.MOUNT ) or ArkInventory.PT_ItemInSets( i.h, "ArkInventory.System.Mount" ) then
+		if ArkInventory.IsBound( i.sb ) then
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_MOUNT_BOUND" )
+		else
+			return ArkInventory.CategoryGetSystemID( "SYSTEM_MOUNT_TRADE" )
+		end
+	end
+	
+	-- PT toy
+	if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.System.Toy" ) then
+		return ArkInventory.CategoryGetSystemID( "SYSTEM_TOY" )
+	end
+	
 	-- junk
 	if info.q == ArkInventory.Const.ENUM.ITEMQUALITY.POOR or ArkInventory.PT_ItemInSets( i.h, "ArkInventory.System.Junk" ) then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_JUNK" )
@@ -868,39 +900,6 @@ function ArkInventory.ItemCategoryGetDefaultActual( i )
 	if info.itemtypeid == ArkInventory.Const.ENUM.ITEMCLASS.GLYPH.PARENT then
 		return ArkInventory.CategoryGetSystemID( "SYSTEM_GLYPH" )
 	end
-	
-	-- battle pet as an item
-	if info.itemtypeid == ArkInventory.Const.ENUM.ITEMCLASS.BATTLEPET.PARENT then
-		if ArkInventory.IsBound( i.sb ) then
-			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_BATTLE_BOUND" )
-		else
-			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_BATTLE_TRADE" )
-		end
-	end
-	
-	-- misc (pets)
-	if ( info.itemtypeid == ArkInventory.Const.ENUM.ITEMCLASS.MISC.PARENT and info.itemsubtypeid == ArkInventory.Const.ENUM.ITEMCLASS.MISC.PET ) or ArkInventory.PT_ItemInSets( i.h, "ArkInventory.System.Pet" ) then
-		if ArkInventory.IsBound( i.sb ) then
-			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION_BOUND" )
-		else
-			return ArkInventory.CategoryGetSystemID( "SYSTEM_PET_COMPANION_TRADE" )
-		end
-	end
-	
-	-- misc (mount)
-	if ( info.itemtypeid == ArkInventory.Const.ENUM.ITEMCLASS.MISC.PARENT and info.itemsubtypeid == ArkInventory.Const.ENUM.ITEMCLASS.MISC.MOUNT ) or ArkInventory.PT_ItemInSets( i.h, "ArkInventory.System.Mount" ) then
-		if ArkInventory.IsBound( i.sb ) then
-			return ArkInventory.CategoryGetSystemID( "SYSTEM_MOUNT_BOUND" )
-		else
-			return ArkInventory.CategoryGetSystemID( "SYSTEM_MOUNT_TRADE" )
-		end
-	end
-	
-	-- PT toy
-	if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.System.Toy" ) then
-		return ArkInventory.CategoryGetSystemID( "SYSTEM_TOY" )
-	end
-	
 	
 	-- gems
 	if info.itemtypeid == ArkInventory.Const.ENUM.ITEMCLASS.GEM.PARENT or ArkInventory.PT_ItemInSets( i.h, "ArkInventory.Gems" ) then
@@ -1478,13 +1477,13 @@ function ArkInventory.ItemCategoryGetPrimary( i )
 		-- items category cache id
 		local cid, id, codex = ArkInventory.ObjectIDCategory( i )
 		
-		local cat_id = codex.catset.category.assign[id]
+		local cat_id = codex.catset.ia[id].assign
 		if cat_id then
 			-- manually assigned item to a category?
 			local cat_type, cat_num = ArkInventory.CategoryIdSplit( cat_id )
 			if cat_type == 1 then
 				return cat_id
-			elseif codex.catset.category.active[cat_type][cat_num] then -- category is active in this categoryset?
+			elseif codex.catset.ca[cat_type][cat_num].active then -- category is active in this categoryset?
 				if ArkInventory.db.option.category[cat_type].data[cat_num].used == "Y" then -- category is enabled?
 					return cat_id
 				end

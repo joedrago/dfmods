@@ -3,8 +3,8 @@
 ## Title: ArkInventory
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
-## Version: 31004
-## X-ReleaseType: 
+## Version: 31004.17
+## X-ReleaseType: Alpha
 ## SavedVariables: ARKINVDB
 
 ## Notes: Allows you to view all items from all your characters on the same account, when-ever and where-ever you want.
@@ -24,6 +24,10 @@
 ## X-Curse-Project-ID: 3651
 ## X-WoWI-ID: 6488
 ## X-Wago-ID: rkGr1XKy
+
+## t-Curse-Project-ID: 581591
+## t-WoWI-ID: 26395
+## t-Wago-ID: 5bGo1860
 
 
 #@no-lib-strip@
@@ -68,7 +72,7 @@ Core\ArkInventoryTooltip.lua
 Core\ArkInventoryMoney.lua
 Core\ArkInventoryMedia.lua
 
-Core\ArkInventoryJunk.lua
+Core\ArkInventoryAction.lua
 
 Core\ArkInventory.xml
 

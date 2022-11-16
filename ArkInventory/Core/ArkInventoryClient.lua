@@ -177,10 +177,7 @@ function ArkInventory.CrossClient.GetContainerItemQuestInfo( i, ... )
 	if C_Container and C_Container.GetContainerItemQuestInfo then
 		info = C_Container.GetContainerItemQuestInfo( ... )
 	elseif GetContainerItemQuestInfo then
-		local questitem, questid, active = GetContainerItemQuestInfo( ... )
-		info.isQuestItem = questitem
-		info.questID = questid
-		info.isActive = active
+		info.isQuestItem, info.questID, info.isActive = GetContainerItemQuestInfo( ... )
 	else
 		if ArkInventory.PT_ItemInSets( i.h, "ArkInventory.System.Quest.Start" ) then
 			info.isQuestItem = true
@@ -480,28 +477,35 @@ function ArkInventory.CrossClient.GetContainerItemInfo( ... )
 	if C_Container and C_Container.GetContainerItemInfo then
 		info = C_Container.GetContainerItemInfo( ... )
 	elseif GetContainerItemInfo then
-		local icon, count, locked, quality, readable, lootable, hyperlink, filtered, novalue, itemid, bound = GetContainerItemInfo( ... )
-		info.iconFileID = icon
-		info.stackCount = count
-		info.isLocked = locked
-		info.quality = quality
-		info.isReadable = readable
-		info.hasLoot = lootable
-		info.hyperlink = hyperlink
-		info.isFiltered = filtered
-		info.hasNoValue = novalue
-		info.itemID = itemid
-		info.isBound = bound
+		info.iconFileID, info.stackCount, info.isLocked, info.quality, info.isReadable, info.hasLoot, info.hyperlink, info.isFiltered, info.hasNoValue, info.itemID, info.isBound = GetContainerItemInfo( ... )
 	end
 	
 	if not info then
 		info = { }
 	end
 	
-	info.quality = info.quality or ArkInventory.Const.ENUM.ITEMQUALITY.POOR
 	info.stackCount = info.stackCount or 1
+	info.quality = info.quality or ArkInventory.Const.ENUM.ITEMQUALITY.POOR
 	
 	return info
+	
+end
+
+function ArkInventory.CrossClient.GetContainerItemID( ... )
+	
+	if C_Container and C_Container.GetContainerItemID then
+		return C_Container.GetContainerItemID( ... )
+	elseif GetContainerItemID then
+		return GetContainerItemID( ... )
+	end
+	
+end
+
+function ArkInventory.CrossClient.GetInventoryItemID( ... )
+	
+	if GetInventoryItemID then
+		return GetInventoryItemID( ... )
+	end
 	
 end
 

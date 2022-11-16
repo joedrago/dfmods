@@ -1334,30 +1334,25 @@ function ArkInventory.ConfigInternalProfileExport( id )
 						
 						catset_used[catset_id] = true
 						
-						for k, v in pairs( data.category.assign ) do
-							if not export_cat( v ) then
-								data.category.assign[k] = nil
-							end
-						end
-						
-						for k1, v1 in pairs( data.category.active ) do
-							for k2, v2 in pairs( v1 ) do
-								if v2 then
-									local cat_id = ArkInventory.CategoryIdBuild( k1, k2 )
-									if not export_cat( cat_id ) then
-										v1[k2] = false
-									end
+						for item_id, v1 in pairs( data.ia ) do
+							v1.action = nil
+							if v1.assign then
+								if not export_cat( v1.assign ) then
+									data.ia[item_id].assign = nil
 								end
 							end
 						end
 						
-						for k1, v1 in pairs( data.category.junk ) do
-							for k2, v2 in pairs( v1 ) do
-								if v2 then
-									local cat_id = ArkInventory.CategoryIdBuild( k1, k2 )
+						for cat_type, v1 in pairs( data.ca ) do
+							for cat_num, v2 in pairs( v1 ) do
+								v2.action = nil
+								if v2.active then
+									local cat_id = ArkInventory.CategoryIdBuild( cat_type, cat_num )
 									if not export_cat( cat_id ) then
-										v1[k2] = false
+										v1[cat_num] = nil
 									end
+								else
+									v1[cat_num] = nil
 								end
 							end
 						end
@@ -1473,6 +1468,23 @@ function ArkInventory.ConfigInternalProfileImport( src )
 	local catset_used = { }
 	for k, v in pairs( src.catset ) do
 		
+		-- remove item actions so they cant be abused
+		if v.ia then
+			for item_id, v1 in pairs( v.ia ) do
+				v1.action = nil
+			end
+		end
+		
+		-- remove category actions so they cant be abused
+		if v.ca then
+			for cat_type, v1 in pairs( v.ca ) do
+				for cat_num, v2 in pairs( v1 ) do
+					v2.action = nil
+				end
+			end
+		end
+		
+		
 		local id, data = ArkInventory.ConfigInternalCategorysetFindGUID( v.guid )
 		if id then
 			data = ArkInventory.ConfigInternalCategorysetCopyFrom( 0, id )
@@ -1482,6 +1494,8 @@ function ArkInventory.ConfigInternalProfileImport( src )
 			import_text = "added new categoryset " .. id .. " from " .. k
 		end
 		
+		
+		
 		if id > 0 then
 			
 			--ArkInventory.Output( import_text )
@@ -1489,56 +1503,38 @@ function ArkInventory.ConfigInternalProfileImport( src )
 			ArkInventory.Table.Merge( v, data )
 			catset_used[k] = id
 			
-			local tmp = ArkInventory.Table.Copy( data.category.assign )
-			ArkInventory.Table.Clean( data.category.assign )
-			for item_id, cat_id in pairs ( tmp ) do
+			local tmp = ArkInventory.Table.Copy( data.ia )
+			ArkInventory.Table.Clean( data.ia )
+			for item_id, v1 in pairs( tmp ) do
+				local cat_id = v1.assign
 				local cat_type, cat_num = ArkInventory.CategoryIdSplit( cat_id )
 				local cat_new = cat_used[cat_id]
 				if cat_new then
-					data.category.assign[item_id] = cat_new
+					data.ia[item_id].assign = cat_new
 					--ArkInventory.Output( "assign - mapped category: ", item_id, " = ", cat_id, " > ", cat_new )
 				elseif cat_type == ArkInventory.Const.Category.Type.System then
-					data.category.assign[item_id] = cat_id
+					data.ia[item_id].assign = cat_id
 					--ArkInventory.Output( "assign - unmapped system category: ", item_id, " = ", cat_id )
 				else
 					--ArkInventory.Output( "assign - ignored: ", item_id, " = ", cat_id )
 				end
 			end
 			
-			local tmp = ArkInventory.Table.Copy( data.category.active )
-			ArkInventory.Table.Clean( data.category.active )
+			local tmp = ArkInventory.Table.Copy( data.ca )
+			ArkInventory.Table.Clean( data.ca )
 			for k1, v1 in pairs( tmp ) do
 				for k2, v2 in pairs( v1 ) do
 					local cat_new = ArkInventory.CategoryIdBuild( k1, k2 )
 					cat_new = cat_used[cat_new]
 					if cat_new then
 						local cat_type, cat_num = ArkInventory.CategoryIdSplit( cat_new )
-						data.category.active[cat_type][cat_num] = v2
+						data.ca[cat_type][cat_num] = v2
 						--ArkInventory.Output( "active - mapped category: ", k1, "+", k2, " > ", cat_new, " = ", v2 )
 					elseif k1 == ArkInventory.Const.Category.Type.System then
-						data.category.active[k1][k2] = v2
+						data.ca[k1][k2] = v2
 						--ArkInventory.Output( "active - unmapped system category: ", k1, "+", k2, " = ", v2 )
 					else
 						--ArkInventory.Output( "active - ignored: ", k1, "+", k2, " = ", v2 )
-					end
-				end
-			end
-			
-			local tmp = ArkInventory.Table.Copy( data.category.junk )
-			ArkInventory.Table.Clean( data.category.junk )
-			for k1, v1 in pairs( tmp ) do
-				for k2, v2 in pairs( v1 ) do
-					local cat_new = ArkInventory.CategoryIdBuild( k1, k2 )
-					cat_new = cat_used[cat_new]
-					if cat_new then
-						local cat_type, cat_num = ArkInventory.CategoryIdSplit( cat_new )
-						data.category.junk[cat_type][cat_num] = v2
-						--ArkInventory.Output( "junk - mapped category: ", k1, "+", k2, " > ", cat_new, " = ", v2 )
-					elseif k1 == ArkInventory.Const.Category.Type.System then
-						data.category.junk[k1][k2] = v2
-						--ArkInventory.Output( "junk - unmapped system category: ", k1, "+", k2, " = ", v2 )
-					else
-						--ArkInventory.Output( "junk - ignored: ", k1, "+", k2, " = ", v2 )
 					end
 				end
 			end

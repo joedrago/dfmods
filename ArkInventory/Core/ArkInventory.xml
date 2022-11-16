@@ -6,6 +6,9 @@
   <GameTooltip virtual="true" name="ArkScanTooltipTemplate" inherits="GameTooltipTemplate" >
     <Scripts>
       <Onload>
+        SharedTooltip_OnLoad( self )
+        self.updateTooltipTimer = TOOLTIP_UPDATE_TIME
+        
         GameTooltip_OnLoad( self )
         self:SetOwner( UIParent, "ANCHOR_NONE" )
         
@@ -295,7 +298,6 @@
           <Color r="1" g="0" b="0" a="0.5"/>
         </Texture>
       </Layer>
-      
       <Layer level="OVERLAY" textureSubLevel="7">
         <Texture parentKey="ArkIconProfessionRank" name="$parentArkIconProfessionRank" hidden="true" >
           <Size x="12" y="12" />
@@ -308,6 +310,12 @@
             <Anchor point="TOPLEFT" x="0" y="0" />
           </Anchors>
         </FontString>
+        <Texture parentKey="ArkIconTransmog" name="$parentArkIconTransmog" hidden="true" >
+          <Size x="12" y="12" />
+          <Anchors>
+            <Anchor point="BOTTOMLEFT" x="0" y="0" />
+          </Anchors>
+        </Texture>
         <Texture parentKey="ArkIconCorrupted" name="$parentArkIconCorrupted" hidden="true" >
           <Size x="12" y="12" />
           <Anchors>
@@ -315,22 +323,7 @@
           </Anchors>
         </Texture>
       </Layer>
-      
       <Layer level="OVERLAY" textureSubLevel="6">
-        <FontString parentKey="ArkLevel" name="$parentLevel" inherits="NumberFontNormalYellow" justifyH="LEFT" hidden="true" >
-          <Anchors>
-            <Anchor point="TOPLEFT" x="0" y="0" />
-          </Anchors>
-        </FontString>
-      </Layer>
-      
-      <Layer level="OVERLAY" textureSubLevel="1">
-        <Texture parentKey="ArkIconTransmog" name="$parentArkIconTransmog" hidden="true" >
-          <Size x="12" y="12" />
-          <Anchors>
-            <Anchor point="BOTTOMLEFT" x="0" y="0" />
-          </Anchors>
-        </Texture>
         <FontString parentKey="ArkLevel" name="$parentLevel" inherits="NumberFontNormalYellow" justifyH="LEFT" hidden="true" >
           <Anchors>
             <Anchor point="TOPLEFT" x="0" y="0" />
@@ -343,7 +336,9 @@
             <Anchor point="CENTER" />
           </Anchors>
         </FontString>
-        <Texture parentKey="ArkIconQuest" name="$parentArkIconQuest" hidden="true" >
+      </Layer>
+      <Layer level="OVERLAY" textureSubLevel="1">
+        <Texture parentKey="ArkIconQuestBang" name="$parentArkIconQuestBang" hidden="true" >
           <Size x="8" y="24" />
           <Anchors>
             <Anchor point="BOTTOMLEFT" />
@@ -354,6 +349,7 @@
     
     <Frames>
       <Frame parentKey="ArkListEntry" name="$parentArkListEntry" inherits="ARKINV_TemplateButtonListEntryItem" />
+      <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate" />
     </Frames>
     
     <Scripts>
@@ -383,7 +379,7 @@
       </OnMouseUp>
       
       <PreClick>
-        ArkInventory.Frame_Item_PreClick( self, button )
+        ArkInventory.Frame_Item_PreClick( self, button, down )
       </PreClick>
       
       <PostClick>
@@ -411,6 +407,32 @@
     </PushedTexture>
     
     <Layers>
+      <Layer level="OVERLAY" textureSubLevel="7">
+        <Texture parentKey="ArkIconProfessionRank" name="$parentArkIconProfessionRank" hidden="true" >
+          <Size x="12" y="12" />
+          <Anchors>
+            <Anchor point="TOPLEFT" x="0" y="0" />
+          </Anchors>
+        </Texture>
+        <FontString parentKey="ArkIconProfessionRankText" name="$parentArkIconProfessionRankText" inherits="NumberFontNormalYellow" justifyH="LEFT" hidden="true" >
+          <Anchors>
+            <Anchor point="TOPLEFT" x="0" y="0" />
+          </Anchors>
+        </FontString>
+        <Texture parentKey="ArkIconCorrupted" name="$parentArkIconCorrupted" hidden="true" >
+          <Size x="12" y="12" />
+          <Anchors>
+            <Anchor point="BOTTOMLEFT" x="0" y="0" />
+          </Anchors>
+        </Texture>
+      </Layer>
+      <Layer level="OVERLAY" textureSubLevel="6">
+        <FontString parentKey="ArkLevel" name="$parentLevel" inherits="NumberFontNormalYellow" justifyH="LEFT" hidden="true" >
+          <Anchors>
+            <Anchor point="TOPLEFT" x="0" y="0" />
+          </Anchors>
+        </FontString>
+      </Layer>
       <Layer level="OVERLAY" textureSubLevel="3">
         <Texture parentKey="ArkHighlight" name="$parentArkHighlight" setAllPoints="true" hidden="true" >
           <Color r="0" g="0" b="0" a="0.8" />
@@ -421,14 +443,13 @@
           <Color r="1" g="0" b="0" a="0.5"/>
         </Texture>
       </Layer>
-      <Layer level="ARTWORK" textureSubLevel="2">
-        <FontString parentKey="ArkItemAge" name="$parentArkItemAge" inherits="ARKINV_NewItemFont" hidden="true" >
-          <Anchors>
-            <Anchor point="CENTER" />
-          </Anchors>
-        </FontString>
-      </Layer>
       <Layer level="OVERLAY" textureSubLevel="1">
+        <Texture parentKey="ArkIconQuestBang" name="$parentArkIconQuestBang" hidden="true" >
+          <Size x="8" y="24" />
+          <Anchors>
+            <Anchor point="BOTTOMLEFT" />
+          </Anchors>
+        </Texture>
         <Texture parentKey="ArkIconTransmog" name="$parentArkIconTransmog" hidden="true" >
           <Size x="12" y="12" />
           <Anchors>
@@ -447,15 +468,11 @@
             <Anchor point="TOPLEFT" />
           </Anchors>
         </Texture>
-        <Texture parentKey="ArkIconQuest" name="$parentArkIconQuest" hidden="true" >
-          <Size x="8" y="24" />
+      </Layer>
+      <Layer level="ARTWORK" textureSubLevel="2">
+        <FontString parentKey="ArkItemAge" name="$parentArkItemAge" inherits="ARKINV_NewItemFont" hidden="true" >
           <Anchors>
-            <Anchor point="BOTTOMLEFT" x="4" y="6" />
-          </Anchors>
-        </Texture>
-        <FontString parentKey="ArkLevel" name="$parentLevel" inherits="NumberFontNormalYellow" justifyH="LEFT" hidden="true" >
-          <Anchors>
-            <Anchor point="TOPLEFT" x="0" y="0" />
+            <Anchor point="CENTER" />
           </Anchors>
         </FontString>
       </Layer>
@@ -463,6 +480,7 @@
     
     <Frames>
       <Frame parentKey="ArkListEntry" name="$parentArkListEntry" inherits="ARKINV_TemplateButtonListEntryItem" />
+      <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate" />
     </Frames>
     
     <Scripts>
@@ -831,6 +849,10 @@
       </Layer>
     </Layers>
     
+    <Frames>
+      <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate" />
+    </Frames>
+    
     <Scripts>
       
       <OnLoad>
@@ -884,6 +906,10 @@
         </Texture>
       </Layer>
     </Layers>
+    
+    <Frames>
+      <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate" />
+    </Frames>
     
     <Scripts>
       
@@ -1095,6 +1121,10 @@
       </Anchors>
     </PushedTexture>
     
+    <Frames>
+      <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate" />
+    </Frames>
+    
     <Scripts>
       
       <OnLoad>
@@ -1152,6 +1182,10 @@
         <Anchor point="CENTER" />
       </Anchors>
     </PushedTexture>
+    
+    <Frames>
+      <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate" />
+    </Frames>
     
     <Scripts>
       
@@ -1221,9 +1255,9 @@
   </ItemButton>
   
   <Button virtual="true" name="ARKINV_TemplateChangerVaultTab2" inherits="ARKINV_TemplateChangerPlayerMain2">
-  
+    
     <Scripts>
-  
+      
       <OnLoad>
         ArkInventory.Frame_Changer_Vault_Tab_OnLoad( self )
       </OnLoad>
@@ -1231,17 +1265,17 @@
       <OnClick>
         ArkInventory.Frame_Changer_Vault_Tab_OnClick( self, button )
       </OnClick>
-
-          <OnReceiveDrag>
-              ArkInventory.Frame_Changer_Vault_Tab_OnClick( self )
-          </OnReceiveDrag>
+      
+      <OnReceiveDrag>
+          ArkInventory.Frame_Changer_Vault_Tab_OnClick( self )
+      </OnReceiveDrag>
       
       <OnEnter>
         ArkInventory.Frame_Changer_Vault_Tab_OnEnter( self )
       </OnEnter>
       
     </Scripts>
-      
+    
   </Button>
   
   

@@ -79,7 +79,7 @@ end
 
 function ArkInventory.LDB.Money:Update( )
 	
-	local icon = string.format( "|T%s:0|t", ArkInventory.Const.Texture.Junk )
+	local icon = string.format( "|T%s:0|t", ArkInventory.Const.Texture.Money )
 	local hasText
 	
 	hasText = ArkInventory.MoneyText( GetMoney( ) )
@@ -1068,11 +1068,12 @@ function ArkInventory.LDB.Mounts:OnTooltipShow( ... )
 	
 end
 
-function ArkInventory.LDB.Mounts:OnClick( button )
+function ArkInventory.LDB.Mounts:OnClick( button, down )
 	
 	local loc_id = ArkInventory.Const.Location.Mount
 	
 	if not ArkInventory.isLocationMonitored( loc_id ) or not ArkInventory.Collection.Mount.IsReady( ) then
+		ArkInventory.OutputDebug( "location not monitored or ready" )
 		return
 	end
 	

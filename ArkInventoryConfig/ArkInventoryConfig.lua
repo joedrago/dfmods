@@ -19,53 +19,48 @@ local type = _G.type
 local error = _G.error
 local table = _G.table
 
-local SortByName = 1
-local SortByNumber = 2
-local ShowUsed = 1
-local ShowDeleted = 2
-
 local config = {
 	me = ArkInventory.GetPlayerCodex( ),
 	catset = {
-		sort = 1,
-		show = 1,
+		sort = ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME,
+		show = ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 		selected = nil,
 	},
 	sortmethod = {
-		sort = 1,
-		show = 1,
+		sort = ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME,
+		show = ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 	},
 	profile = {
-		sort = 1,
-		show = 1,
+		sort = ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME,
+		show = ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 		selected = nil,
 	},
 	category = {
 		system = {
-			sort = 1,
+			sort = ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME,
 			selected = nil,
 		},
 		custom = {
 			sort = {
-				list = 1,
-				item = 1,
+				list = ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME,
+				item = ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME,
 			},
-			show = 1,
+			show = ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			selected = nil,
 		},
 		rule = {
-			sort = 1,
-			show = 1,
+			sort = ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME,
+			show = ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			selected = nil,
 		},
 	},
 	account = {
-		sort = 1,
-		show = 1,
+		sort = ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME,
+		show = ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 	},
 	design = {
-		sort = 1,
-		show = 1,
+		sort = ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME,
+		show = ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 	},
 }
 config.isCharacterOptionText = ORANGE_FONT_COLOR:WrapTextInColorCode( string.format( ArkInventory.Localise["CONFIG_IS_PER_CHARACTER"], config.me.player.data.info.name ) )
@@ -1468,230 +1463,247 @@ function ArkInventory.ConfigInternal( )
 						},
 					},
 				},
-				junk = {
+				actions = {
 					order = 1000,
-					name = ArkInventory.Localise["JUNK"],
+					name = ArkInventory.Localise["CONFIG_ACTION"],
 					type = "group",
+					childGroups = "tab",
 					args = {
-						process = {
-							order = 1,
-							name = string.format( ArkInventory.Localise["CONFIG_JUNK_PROCESSING_DISABLED_DESC"], ArkInventory.Global.Junk.addon or ArkInventory.Localise["UNKNOWN"] ),
-							type = "description",
-							width = "full",
-							fontSize = "medium",
-							hidden = ArkInventory.Global.Junk.process,
-						},
-						autosell = {
-							order = 100,
-							name = ArkInventory.Localise["CONFIG_JUNK_SELL_AUTO"],
-							desc = ArkInventory.Localise["CONFIG_JUNK_SELL_AUTO_DESC"],
-							type = "toggle",
-							disabled = not ArkInventory.Global.Junk.process,
-							get = function( info )
-								return ArkInventory.db.option.junk.sell
-							end,
-							set = function( info, v )
-								ArkInventory.db.option.junk.sell = not ArkInventory.db.option.junk.sell
-							end,
-						},
-						testmode = {
-							order = 200,
-							name = ArkInventory.Localise["CONFIG_JUNK_TESTMODE"],
-							desc = ArkInventory.Localise["CONFIG_JUNK_TESTMODE_DESC"],
-							type = "toggle",
-							disabled = function( info )
-								return not ArkInventory.Global.Junk.process
-							end,
-							get = function( info )
-								return ArkInventory.db.option.junk.test
-							end,
-							set = function( info, v )
-								ArkInventory.db.option.junk.test = not ArkInventory.db.option.junk.test
-							end,
-						},
-						raritycutoff = {
-							order = 300,
-							name = ArkInventory.Localise["CONFIG_DESIGN_ITEM_BORDER_QUALITY_CUTOFF"],
-							desc = function( info )
-								return string.format( ArkInventory.Localise["CONFIG_JUNK_QUALITY_CUTOFF_DESC"], ( select( 5, ArkInventory.GetItemQualityColor( ArkInventory.db.option.junk.raritycutoff ) ) ), _G[string.format( "ITEM_QUALITY%d_DESC", ArkInventory.db.option.junk.raritycutoff or ArkInventory.Const.ENUM.ITEMQUALITY.POOR )] )
-							end,
-							type = "select",
-							disabled = function( info )
-								return not ArkInventory.Global.Junk.process
-							end,
-							values = function( )
-								local t = { }
-								for z in pairs( ITEM_QUALITY_COLORS ) do
-									if z >= ArkInventory.Const.ENUM.ITEMQUALITY.POOR then
-										t[tostring( z )] = string.format( "%s%s", select( 5, ArkInventory.GetItemQualityColor( z ) ), _G[string.format( "ITEM_QUALITY%d_DESC", z )] )
-									end
-								end
-								return t
-							end,
-							get = function( info )
-								return tostring( ArkInventory.db.option.junk.raritycutoff or ArkInventory.Const.ENUM.ITEMQUALITY.POOR )
-							end,
-							set = function( info, v )
-								ArkInventory.db.option.junk.raritycutoff = tonumber( v )
-								ArkInventory.ItemCacheClear( )
-								ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
-							end,
-						},
-						limit = {
-							order = 400,
-							name = ArkInventory.Localise["CONFIG_JUNK_LIMIT"],
-							desc = string.format( ArkInventory.Localise["CONFIG_JUNK_LIMIT_DESC"], BUYBACK_ITEMS_PER_PAGE ),
-							type = "toggle",
-							disabled = function( info )
-								return not ArkInventory.Global.Junk.process
-							end,
-							get = function( info )
-								return ArkInventory.db.option.junk.limit
-							end,
-							set = function( info, v )
-								ArkInventory.db.option.junk.limit = not ArkInventory.db.option.junk.limit
-							end,
-						},
-						combat = {
-							order = 500,
-							name = ArkInventory.Localise["COMBAT"],
-							desc = ArkInventory.Localise["CONFIG_JUNK_COMBAT_DESC"],
-							type = "toggle",
-							width = "half",
-							disabled = not ArkInventory.Global.Junk.process,
-							get = function( info )
-								return ArkInventory.db.option.junk.combat
-							end,
-							set = function( info, v )
-								ArkInventory.db.option.junk.combat = not ArkInventory.db.option.junk.combat
-							end,
-						},
-						delete = {
-							order = 600,
-							name = ArkInventory.Localise["DELETE"],
-							desc = ArkInventory.Localise["CONFIG_JUNK_DELETE_DESC"],
-							type = "toggle",
-							width = "half",
-							disabled = function( info )
-								return not ArkInventory.Global.Junk.process
-							end,
-							get = function( info )
-								return ArkInventory.db.option.junk.delete
-							end,
-							set = function( info, v )
-								ArkInventory.db.option.junk.delete = not ArkInventory.db.option.junk.delete
-							end,
-						},
-						notify = {
-							order = 700,
-							name = ArkInventory.Localise["NOTIFY"],
-							desc = ArkInventory.Localise["CONFIG_JUNK_NOTIFY_DESC"],
-							type = "toggle",
-							width = "half",
-							disabled = function( info )
-								return not ArkInventory.Global.Junk.process
-							end,
-							get = function( info )
-								return ArkInventory.db.option.junk.notify
-							end,
-							set = function( info, v )
-								ArkInventory.db.option.junk.notify = not ArkInventory.db.option.junk.notify
-							end,
-						},
-						list = {
-							order = 800,
-							name = ArkInventory.Localise["LIST"],
-							desc = ArkInventory.Localise["CONFIG_JUNK_LIST_DESC"],
-							type = "toggle",
-							width = "half",
-							disabled = function( info )
-								return not ArkInventory.Global.Junk.process
-							end,
-							get = function( info )
-								return ArkInventory.db.option.junk.list
-							end,
-							set = function( info, v )
-								ArkInventory.db.option.junk.list = not ArkInventory.db.option.junk.list
-							end,
-						},
-						timeout = {
-							order = 900,
-							name = ArkInventory.Localise["CONFIG_GENERAL_WORKAROUND_THREAD"],
-							desc = ArkInventory.Localise["CONFIG_JUNK_TIMER_DESC"],
-							type = "range",
-							min = 25,
-							max = 2500,
-							step = 5,
-							disabled = function( )
-								return not ArkInventory.Global.Thread.Use or not ArkInventory.Global.Junk.process
-							end,
-							get = function( info )
-								return ArkInventory.db.option.thread.timeout.junksell
-							end,
-							set = function( info, v )
-								local v = math.floor( v / 5 ) * 5
-								if v < 25 then v = 25 end
-								if v > 2500 then v = 2500 end
-								ArkInventory.db.option.thread.timeout.junksell = v
-							end,
-						},
-						soulbound = {
-							order = 5000,
-							name = ArkInventory.Localise["SOULBOUND"],
+						junk = {
+							order = 1000,
+							name = ArkInventory.Localise["VENDOR"],
 							type = "group",
-							inline = true,
 							args = {
-								known = {
+								process = {
+									order = 1,
+									name = string.format( ArkInventory.Localise["CONFIG_ACTION_VENDOR_PROCESSING_DISABLED_DESC"], ArkInventory.Global.Action.Vendor.addon or ArkInventory.Localise["UNKNOWN"] ),
+									type = "description",
+									width = "full",
+									fontSize = "medium",
+									hidden = ArkInventory.Global.Action.Vendor.process,
+								},
+								autosell = {
 									order = 100,
-									name = ArkInventory.Localise["ALREADY_KNOWN"],
-									desc = ArkInventory.Localise["CONFIG_JUNK_SOULBOUND_ALREADY_KNOWN_DESC"],
+									name = ArkInventory.Localise["CONFIG_ACTION_VENDOR_SELL_AUTO"],
+									desc = ArkInventory.Localise["CONFIG_ACTION_VENDOR_SELL_AUTO_DESC"],
 									type = "toggle",
-									disabled = function( info )
-										return not ArkInventory.Global.Junk.process
-									end,
+									disabled = not ArkInventory.Global.Action.Vendor.process,
 									get = function( info )
-										return ArkInventory.db.option.junk.soulbound.known
+										return ArkInventory.db.option.junk.sell
 									end,
 									set = function( info, v )
-										ArkInventory.db.option.junk.soulbound.known = not ArkInventory.db.option.junk.soulbound.known
-										ArkInventory.ItemCacheClear( )
-										ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
+										ArkInventory.db.option.junk.sell = not ArkInventory.db.option.junk.sell
 									end,
 								},
-								equipment = {
+								testmode = {
 									order = 200,
-									name = ArkInventory.Localise["EQUIPMENT"],
-									desc = ArkInventory.Localise["CONFIG_JUNK_SOULBOUND_EQUIPMENT_DESC"],
+									name = ArkInventory.Localise["CONFIG_ACTION_VENDOR_TESTMODE"],
+									desc = ArkInventory.Localise["CONFIG_ACTION_VENDOR_TESTMODE_DESC"],
 									type = "toggle",
 									disabled = function( info )
-										return not ArkInventory.Global.Junk.process
+										return not ArkInventory.Global.Action.Vendor.process
 									end,
 									get = function( info )
-										return ArkInventory.db.option.junk.soulbound.equipment
+										return ArkInventory.db.option.junk.test
 									end,
 									set = function( info, v )
-										ArkInventory.db.option.junk.soulbound.equipment = not ArkInventory.db.option.junk.soulbound.equipment
-										ArkInventory.ItemCacheClear( )
-										ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
+										ArkInventory.db.option.junk.test = not ArkInventory.db.option.junk.test
 									end,
 								},
-								itemlevel = {
+								raritycutoff = {
 									order = 300,
-									name = ArkInventory.Localise["ITEM_LEVEL"],
-									desc = ArkInventory.Localise["CONFIG_JUNK_SOULBOUND_ITEMLEVEL_DESC"],
-									type = "toggle",
+									name = ArkInventory.Localise["CONFIG_DESIGN_ITEM_BORDER_QUALITY_CUTOFF"],
+									desc = function( info )
+										return string.format( ArkInventory.Localise["CONFIG_ACTION_VENDOR_QUALITY_CUTOFF_DESC"], ( select( 5, ArkInventory.GetItemQualityColor( ArkInventory.db.option.junk.raritycutoff ) ) ), _G[string.format( "ITEM_QUALITY%d_DESC", ArkInventory.db.option.junk.raritycutoff or ArkInventory.Const.ENUM.ITEMQUALITY.POOR )] )
+									end,
+									type = "select",
 									disabled = function( info )
-										return not ArkInventory.Global.Junk.process or not ArkInventory.db.option.junk.soulbound.equipment
+										return not ArkInventory.Global.Action.Vendor.process
+									end,
+									values = function( )
+										local t = { }
+										for z in pairs( ITEM_QUALITY_COLORS ) do
+											if z >= ArkInventory.Const.ENUM.ITEMQUALITY.POOR then
+												t[tostring( z )] = string.format( "%s%s", select( 5, ArkInventory.GetItemQualityColor( z ) ), _G[string.format( "ITEM_QUALITY%d_DESC", z )] )
+											end
+										end
+										return t
 									end,
 									get = function( info )
-										return ArkInventory.db.option.junk.soulbound.itemlevel
+										return tostring( ArkInventory.db.option.junk.raritycutoff or ArkInventory.Const.ENUM.ITEMQUALITY.POOR )
 									end,
 									set = function( info, v )
-										ArkInventory.db.option.junk.soulbound.itemlevel = not ArkInventory.db.option.junk.soulbound.itemlevel
+										ArkInventory.db.option.junk.raritycutoff = tonumber( v )
 										ArkInventory.ItemCacheClear( )
 										ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
 									end,
 								},
+								limit = {
+									order = 400,
+									name = ArkInventory.Localise["CONFIG_ACTION_VENDOR_SELL_LIMIT"],
+									desc = string.format( ArkInventory.Localise["CONFIG_ACTION_VENDOR_SELL_LIMIT_DESC"], BUYBACK_ITEMS_PER_PAGE ),
+									type = "toggle",
+									disabled = function( info )
+										return not ArkInventory.Global.Action.Vendor.process
+									end,
+									get = function( info )
+										return ArkInventory.db.option.junk.limit
+									end,
+									set = function( info, v )
+										ArkInventory.db.option.junk.limit = not ArkInventory.db.option.junk.limit
+									end,
+								},
+								combat = {
+									order = 500,
+									name = ArkInventory.Localise["COMBAT"],
+									desc = ArkInventory.Localise["CONFIG_ACTION_VENDOR_COMBAT_DESC"],
+									type = "toggle",
+									width = "half",
+									disabled = not ArkInventory.Global.Action.Vendor.process,
+									get = function( info )
+										return ArkInventory.db.option.junk.combat
+									end,
+									set = function( info, v )
+										ArkInventory.db.option.junk.combat = not ArkInventory.db.option.junk.combat
+									end,
+								},
+								delete = {
+									order = 600,
+									name = ArkInventory.Localise["DELETE"],
+									desc = ArkInventory.Localise["CONFIG_ACTION_VENDOR_DESTROY_DESC"],
+									type = "toggle",
+									width = "half",
+									disabled = function( info )
+										return not ArkInventory.Global.Action.Vendor.process
+									end,
+									get = function( info )
+										return ArkInventory.db.option.junk.delete
+									end,
+									set = function( info, v )
+										ArkInventory.db.option.junk.delete = not ArkInventory.db.option.junk.delete
+									end,
+								},
+								notify = {
+									order = 700,
+									name = ArkInventory.Localise["NOTIFY"],
+									desc = ArkInventory.Localise["CONFIG_ACTION_VENDOR_SOLD_DESC"],
+									type = "toggle",
+									width = "half",
+									disabled = function( info )
+										return not ArkInventory.Global.Action.Vendor.process
+									end,
+									get = function( info )
+										return ArkInventory.db.option.junk.notify
+									end,
+									set = function( info, v )
+										ArkInventory.db.option.junk.notify = not ArkInventory.db.option.junk.notify
+									end,
+								},
+								list = {
+									order = 800,
+									name = ArkInventory.Localise["LIST"],
+									desc = ArkInventory.Localise["CONFIG_ACTION_VENDOR_LIST_DESC"],
+									type = "toggle",
+									width = "half",
+									disabled = function( info )
+										return not ArkInventory.Global.Action.Vendor.process
+									end,
+									get = function( info )
+										return ArkInventory.db.option.junk.list
+									end,
+									set = function( info, v )
+										ArkInventory.db.option.junk.list = not ArkInventory.db.option.junk.list
+									end,
+								},
+								timeout = {
+									order = 900,
+									name = ArkInventory.Localise["CONFIG_GENERAL_WORKAROUND_THREAD"],
+									desc = ArkInventory.Localise["CONFIG_ACTION_VENDOR_TIMER_DESC"],
+									type = "range",
+									min = 25,
+									max = 2500,
+									step = 5,
+									disabled = function( )
+										return not ArkInventory.Global.Thread.Use or not ArkInventory.Global.Action.Vendor.process
+									end,
+									get = function( info )
+										return ArkInventory.db.option.thread.timeout.junksell
+									end,
+									set = function( info, v )
+										local v = math.floor( v / 5 ) * 5
+										if v < 25 then v = 25 end
+										if v > 2500 then v = 2500 end
+										ArkInventory.db.option.thread.timeout.junksell = v
+									end,
+								},
+								soulbound = {
+									order = 5000,
+									name = ArkInventory.Localise["SOULBOUND"],
+									type = "group",
+									inline = true,
+									args = {
+										known = {
+											order = 100,
+											name = ArkInventory.Localise["ALREADY_KNOWN"],
+											desc = ArkInventory.Localise["CONFIG_ACTION_VENDOR_SOULBOUND_ALREADY_KNOWN_DESC"],
+											type = "toggle",
+											disabled = function( info )
+												return not ArkInventory.Global.Action.Vendor.process
+											end,
+											get = function( info )
+												return ArkInventory.db.option.junk.soulbound.known
+											end,
+											set = function( info, v )
+												ArkInventory.db.option.junk.soulbound.known = not ArkInventory.db.option.junk.soulbound.known
+												ArkInventory.ItemCacheClear( )
+												ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
+											end,
+										},
+										equipment = {
+											order = 200,
+											name = ArkInventory.Localise["EQUIPMENT"],
+											desc = ArkInventory.Localise["CONFIG_ACTION_VENDOR_SOULBOUND_EQUIPMENT_DESC"],
+											type = "toggle",
+											disabled = function( info )
+												return not ArkInventory.Global.Action.Vendor.process
+											end,
+											get = function( info )
+												return ArkInventory.db.option.junk.soulbound.equipment
+											end,
+											set = function( info, v )
+												ArkInventory.db.option.junk.soulbound.equipment = not ArkInventory.db.option.junk.soulbound.equipment
+												ArkInventory.ItemCacheClear( )
+												ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
+											end,
+										},
+										itemlevel = {
+											order = 300,
+											name = ArkInventory.Localise["ITEM_LEVEL"],
+											desc = ArkInventory.Localise["CONFIG_ACTION_VENDOR_SOULBOUND_ITEMLEVEL_DESC"],
+											type = "toggle",
+											disabled = function( info )
+												return not ArkInventory.Global.Action.Vendor.process or not ArkInventory.db.option.junk.soulbound.equipment
+											end,
+											get = function( info )
+												return ArkInventory.db.option.junk.soulbound.itemlevel
+											end,
+											set = function( info, v )
+												ArkInventory.db.option.junk.soulbound.itemlevel = not ArkInventory.db.option.junk.soulbound.itemlevel
+												ArkInventory.ItemCacheClear( )
+												ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Recalculate )
+											end,
+										},
+									},
+								},
+							},
+						},
+						mail = {
+							order = 1000,
+							name = ArkInventory.Localise["MAIL"],
+							type = "group",
+							hidden = true,
+							args = {
+								
 							},
 						},
 					},
@@ -2782,32 +2794,6 @@ function ArkInventory.ConfigInternal( )
 								},
 							},
 						},
-						interaction = {
-							order = 100,
-							name = "Player Interaction Frame Manager",
-							type = "group",
-							--inline = true,
-							args = {
-								desc = {
-									order = 100,
-									name = "In Dragonflight the default bank and vault frames will open unless I override them.  The problem is that they are now controlled by the PlayerInteractionFrameManager and the way I need to override that will cause taint which means that eventually the frames for several other interactions will end up warning about various blizzard only secure functions being called and want to disable arkiventory.\n\nits a bit of a catch 22 but if required you can disable that override here to stop the alerts but you will get the default frames opening as well\n\nYou will need to reload for this to take effect.",
-									type = "description",
-								},
-								enabled = {
-									order = 200,
-									name = ArkInventory.Localise["ENABLED"],
-									desc = "Override the PlayerInteractionFrameManager",
-									type = "toggle",
-									get = function( info )
-										return ArkInventory.db.option.bugfix.interaction.enable
-									end,
-									set = function( info, v )
-										ArkInventory.db.option.bugfix.interaction.enable = v
-										ArkInventory.OutputWarning( "dont forget to reload" )
-									end,
-								},
-							},
-						},
 					},
 				},
 				rules = {
@@ -3438,7 +3424,7 @@ function ArkInventory.ConfigInternalSortMethod( )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_ADD_DESC"], ArkInventory.Localise["CONFIG_SORTING_METHOD"] ),
 			type = "input",
 			width = "double",
-			disabled = config.sortmethod.show ~= 1,
+			disabled = config.sortmethod.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			get = function( )
 				return ""
 			end,
@@ -3452,7 +3438,7 @@ function ArkInventory.ConfigInternalSortMethod( )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["NAME"], [2] = ArkInventory.Localise["NUMBER"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME] = ArkInventory.Localise["NAME"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NUMBER] = ArkInventory.Localise["NUMBER"] }
 				return t
 			end,
 			get = function( info )
@@ -3469,7 +3455,7 @@ function ArkInventory.ConfigInternalSortMethod( )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["ACTIVE"], [2] = ArkInventory.Localise["DELETED"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE] = ArkInventory.Localise["ACTIVE"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED] = ArkInventory.Localise["DELETED"] }
 				return t
 			end,
 			get = function( info )
@@ -3714,7 +3700,7 @@ function ArkInventory.ConfigInternalSortMethodData( path )
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local v = ArkInventory.ConfigInternalSortMethodGet( id )
-				return v.system or config.sortmethod.show ~= 1
+				return v.system or config.sortmethod.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE
 			end,
 			get = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
@@ -3735,7 +3721,7 @@ function ArkInventory.ConfigInternalSortMethodData( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.sortmethod.show ~= 1,
+			hidden = config.sortmethod.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local v = ArkInventory.ConfigInternalSortMethodGet( id )
@@ -3754,7 +3740,7 @@ function ArkInventory.ConfigInternalSortMethodData( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.sortmethod.show ~= 2,
+			hidden = config.sortmethod.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local v = ArkInventory.ConfigInternalSortMethodGet( id )
@@ -3771,7 +3757,7 @@ function ArkInventory.ConfigInternalSortMethodData( path )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_COPY_DESC"], ArkInventory.Localise["CONFIG_SORTING_METHOD"] ),
 			type = "select",
 			width = "double",
-			hidden = config.sortmethod.show ~= 1,
+			hidden = config.sortmethod.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			values = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local t = { }
@@ -3803,7 +3789,7 @@ function ArkInventory.ConfigInternalSortMethodData( path )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_PURGE_DESC"], ArkInventory.Localise["CONFIG_SORTING_METHOD"] ),
 			type = "execute",
 			width = "half",
-			hidden = config.sortmethod.show ~= 2,
+			hidden = config.sortmethod.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			func = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				ArkInventory.ConfigInternalSortMethodPurge( id )
@@ -3816,7 +3802,7 @@ function ArkInventory.ConfigInternalSortMethodData( path )
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local v = ArkInventory.ConfigInternalSortMethodGet( id )
-				return v.system or config.sortmethod.show ~= 1
+				return v.system or config.sortmethod.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE
 			end,
 			args = args2,
 		},
@@ -3824,13 +3810,13 @@ function ArkInventory.ConfigInternalSortMethodData( path )
 	
 	for id, data in pairs( ArkInventory.db.option.sort.method.data ) do
 		
-		if ( data.used == "Y" and config.sortmethod.show == 1 ) or ( data.used == "D" and config.sortmethod.show == 2 ) then
+		if ( data.used == "Y" and config.sortmethod.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE ) or ( data.used == "D" and config.sortmethod.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED ) then
 			
 			if not data.system then
 				
 				local n = data.name
 				
-				if config.sortmethod.sort == 1 then
+				if config.sortmethod.sort == ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME then
 					n = string.format( "%s [%04i]", n, id )
 				else
 					n = string.format( "[%04i] %s", id, n )
@@ -3864,7 +3850,7 @@ function ArkInventory.ConfigInternalCategoryRule( )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_ADD_DESC"], ArkInventory.Localise["CATEGORY_RULE"] ),
 			type = "input",
 			width = "double",
-			disabled = config.category.rule.show ~= 1,
+			disabled = config.category.rule.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			get = function( )
 				return ""
 			end,
@@ -3879,7 +3865,7 @@ function ArkInventory.ConfigInternalCategoryRule( )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["NAME"], [2] = ArkInventory.Localise["NUMBER"], [3] = ArkInventory.Localise["ORDER"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME] = ArkInventory.Localise["NAME"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NUMBER] = ArkInventory.Localise["NUMBER"], [3] = ArkInventory.Localise["ORDER"] }
 				return t
 			end,
 			get = function( info )
@@ -3896,7 +3882,7 @@ function ArkInventory.ConfigInternalCategoryRule( )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["ACTIVE"], [2] = ArkInventory.Localise["DELETED"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE] = ArkInventory.Localise["ACTIVE"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED] = ArkInventory.Localise["DELETED"] }
 				return t
 			end,
 			get = function( info )
@@ -3927,7 +3913,7 @@ function ArkInventory.ConfigInternalCategoryRuleData( path )
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local cat = ArkInventory.ConfigInternalCategoryRuleGet( id )
-				return cat.system or config.category.rule.show ~= 1
+				return cat.system or config.category.rule.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE
 			end,
 			get = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
@@ -3948,7 +3934,7 @@ function ArkInventory.ConfigInternalCategoryRuleData( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.category.rule.show ~= 1,
+			hidden = config.category.rule.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local cat = ArkInventory.ConfigInternalCategoryRuleGet( id )
@@ -3967,7 +3953,7 @@ function ArkInventory.ConfigInternalCategoryRuleData( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.category.rule.show ~= 2,
+			hidden = config.category.rule.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local cat = ArkInventory.ConfigInternalCategoryRuleGet( id )
@@ -3984,13 +3970,13 @@ function ArkInventory.ConfigInternalCategoryRuleData( path )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_PURGE_DESC"], ArkInventory.Localise["CATEGORY_RULE"] ),
 			type = "execute",
 			width = "half",
-			hidden = config.category.rule.show ~= 2,
+			hidden = config.category.rule.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			func = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				ArkInventory.ConfigInternalCategoryRulePurge( id )
 			end,
 		},
-	
+		
 		rule = { 
 			order = 1000,
 			name = "",
@@ -4007,7 +3993,7 @@ function ArkInventory.ConfigInternalCategoryRuleData( path )
 					disabled = function( info )
 						local id = ConfigGetNodeArg( info, #info - 2 )
 						local cat = ArkInventory.ConfigInternalCategoryRuleGet( id )
-						return cat.system or config.category.rule.show ~= 1
+						return cat.system or config.category.rule.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE
 					end,
 					get = function( info )
 						local id = ConfigGetNodeArg( info, #info - 2 )
@@ -4048,7 +4034,7 @@ function ArkInventory.ConfigInternalCategoryRuleData( path )
 					disabled = function( info )
 						local id = ConfigGetNodeArg( info, #info - 2 )
 						local cat = ArkInventory.ConfigInternalCategoryRuleGet( id )
-						return cat.system or config.category.rule.show ~= 1
+						return cat.system or config.category.rule.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE
 					end,
 					get = function( info )
 						local id = ConfigGetNodeArg( info, #info - 2 )
@@ -4074,15 +4060,15 @@ function ArkInventory.ConfigInternalCategoryRuleData( path )
 	
 	for id, data in pairs( ArkInventory.db.option.category[ArkInventory.Const.Category.Type.Rule].data ) do
 		
-		if ( data.used == "Y" and config.category.rule.show == 1 ) or ( data.used == "D" and config.category.rule.show == 2 ) or ( data.used == "Y" and config.category.rule.show == 3 ) then
+		if ( data.used == "Y" and config.category.rule.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE ) or ( data.used == "D" and config.category.rule.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED ) then
 			
 			if not data.system then
 				
 				local n = data.name
 				
-				if config.category.rule.sort == 1 then
+				if config.category.rule.sort == ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME then
 					n = string.format( "%s [%04i] [%04i]", n, id, data.order )
-				elseif config.category.rule.sort == 3 then
+				elseif config.category.rule.sort == ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.ORDER then
 					n = string.format( "[%04i] %s [%04i]", data.order, n, id )
 				else
 					n = string.format( "[%04i] %s [%04i]", id, n, data.order )
@@ -4120,7 +4106,7 @@ function ArkInventory.ConfigInternalCategoryset( )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_ADD_DESC"], ArkInventory.Localise["CONFIG_CATEGORY_SET"] ),
 			type = "input",
 			width = "double",
-			disabled = config.catset.show ~= 1,
+			disabled = config.catset.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			get = function( )
 				return ""
 			end,
@@ -4136,7 +4122,7 @@ function ArkInventory.ConfigInternalCategoryset( )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["NAME"], [2] = ArkInventory.Localise["NUMBER"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME] = ArkInventory.Localise["NAME"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NUMBER] = ArkInventory.Localise["NUMBER"] }
 				return t
 			end,
 			get = function( info )
@@ -4153,7 +4139,7 @@ function ArkInventory.ConfigInternalCategoryset( )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["ACTIVE"], [2] = ArkInventory.Localise["DELETED"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE] = ArkInventory.Localise["ACTIVE"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED] = ArkInventory.Localise["DELETED"] }
 				return t
 			end,
 			get = function( info )
@@ -4183,7 +4169,7 @@ function ArkInventory.ConfigInternalCategorysetData( path )
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local cat = ArkInventory.ConfigInternalCategorysetGet( id )
-				return cat.system or config.catset.show ~= 1
+				return cat.system or config.catset.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE
 			end,
 			get = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
@@ -4204,7 +4190,7 @@ function ArkInventory.ConfigInternalCategorysetData( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.catset.show ~= 1,
+			hidden = config.catset.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local cat = ArkInventory.ConfigInternalCategorysetGet( id )
@@ -4223,7 +4209,7 @@ function ArkInventory.ConfigInternalCategorysetData( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.catset.show ~= 2,
+			hidden = config.catset.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local cat = ArkInventory.ConfigInternalCategorysetGet( id )
@@ -4240,7 +4226,7 @@ function ArkInventory.ConfigInternalCategorysetData( path )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_COPY_DESC"], ArkInventory.Localise["CONFIG_CATEGORY_SET"] ),
 			type = "select",
 			width = "double",
-			hidden = config.catset.show ~= 1,
+			hidden = config.catset.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			values = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local t = { }
@@ -4271,7 +4257,7 @@ function ArkInventory.ConfigInternalCategorysetData( path )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_PURGE_DESC"], ArkInventory.Localise["CONFIG_CATEGORY_SET"] ),
 			type = "execute",
 			width = "half",
-			hidden = config.catset.show ~= 2,
+			hidden = config.catset.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			func = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				ArkInventory.ConfigInternalCategorysetPurge( id )
@@ -4323,13 +4309,13 @@ function ArkInventory.ConfigInternalCategorysetData( path )
 	
 	for id, data in pairs( ArkInventory.db.option.catset.data ) do
 		
-		if ( data.used == "Y" and config.catset.show == 1 ) or ( data.used == "D" and config.catset.show == 2 ) then
+		if ( data.used == "Y" and config.catset.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE ) or ( data.used == "D" and config.catset.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED ) then
 			
 			if not data.system then
 				
 				local n = data.name
 				
-				if config.catset.sort == 1 then
+				if config.catset.sort == ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME then
 					n = string.format( "%s [%04i]", n, id )
 				else
 					n = string.format( "[%04i] %s", id, n )
@@ -4361,7 +4347,7 @@ function ArkInventory.ConfigInternalCategorysetDataSystem( path )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["NAME"], [2] = ArkInventory.Localise["NUMBER"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME] = ArkInventory.Localise["NAME"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NUMBER] = ArkInventory.Localise["NUMBER"] }
 				return t
 			end,
 			get = function( info )
@@ -4393,38 +4379,18 @@ function ArkInventory.ConfigInternalCategorysetDataSystemData( path )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local catset = ConfigGetNodeArg( info, #info - 3 )
 				catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-				return catset.category.active[ArkInventory.Const.Category.Type.System][id]
+				return catset.ca[ArkInventory.Const.Category.Type.System][id].active
 			end,
 			set = function( info, v )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local catset = ConfigGetNodeArg( info, #info - 3 )
 				catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-				catset.category.active[ArkInventory.Const.Category.Type.System][id] = v
+				catset.ca[ArkInventory.Const.Category.Type.System][id].active = v
 				ArkInventory.ItemCacheClear( )
 				ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
 			end,
 		},
-		autosell = {
-			order = 200,
-			name = ArkInventory.Localise["CONFIG_JUNK_SELL_AUTO"],
-			type = "toggle",
-			disabled = true,
-			get = function( info )
-				local id = ConfigGetNodeArg( info, #info - 1 )
-				local catset = ConfigGetNodeArg( info, #info - 3 )
-				catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-				return catset.category.junk[ArkInventory.Const.Category.Type.System][id]
-			end,
-			set = function( info, v )
-				local id = ConfigGetNodeArg( info, #info - 1 )
-				local catset = ConfigGetNodeArg( info, #info - 3 )
-				catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-				catset.category.junk[ArkInventory.Const.Category.Type.System][id] = v
-				ArkInventory.ItemCacheClear( )
-				ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
-			end,
-		},
-		
+		-- FIX ME - include the category actions
 		track_id = {
 			order = 1,
 			hidden = true,
@@ -4458,7 +4424,7 @@ function ArkInventory.ConfigInternalCategorysetDataSystemData( path )
 			local cat_type, cat_num = ArkInventory.CategoryIdSplit( cat_id )
 			local n = data.shortname
 			
-			if config.catset.system.sort == 1 then
+			if config.catset.system.sort == ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME then
 				n = string.format( "%s [%04i]", n, cat_num )
 			else
 				n = string.format( "[%04i] %s", cat_num, n )
@@ -4503,7 +4469,7 @@ function ArkInventory.ConfigInternalCategorysetDataSystemDataItemData( path )
 				local catset = ConfigGetNodeArg( info, #info - 5 )
 				
 				catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-				catset.category.assign[item] = nil
+				catset.ca[item].assign = nil
 				
 				ArkInventory.ItemCacheClear( )
 				ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
@@ -4521,9 +4487,9 @@ function ArkInventory.ConfigInternalCategorysetDataSystemDataItemData( path )
 	
 	local cat_id = ArkInventory.CategoryIdBuild( ArkInventory.Const.Category.Type.System, config.catset.system.selected )
 	
-	for item, cat in pairs( catset.category.assign ) do
+	for item, ia in pairs( catset.ia ) do
 		
-		if cat == cat_id then
+		if ia.assign == cat_id then
 			
 			local class, id, sb = string.match( item, "^(.+):(.+):(.+)$" )
 			id = tonumber( id )
@@ -4562,7 +4528,7 @@ function ArkInventory.ConfigInternalCategoryCustom( path )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_ADD_DESC"], ArkInventory.Localise["CONFIG_CATEGORY_CUSTOM"] ),
 			type = "input",
 			width = "double",
-			disabled = config.category.custom.show ~= 1,
+			disabled = config.category.custom.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			get = function( )
 				return ""
 			end,
@@ -4577,7 +4543,7 @@ function ArkInventory.ConfigInternalCategoryCustom( path )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["NAME"], [2] = ArkInventory.Localise["NUMBER"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME] = ArkInventory.Localise["NAME"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NUMBER] = ArkInventory.Localise["NUMBER"] }
 				return t
 			end,
 			get = function( info )
@@ -4594,7 +4560,7 @@ function ArkInventory.ConfigInternalCategoryCustom( path )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["ACTIVE"], [2] = ArkInventory.Localise["DELETED"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE] = ArkInventory.Localise["ACTIVE"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED] = ArkInventory.Localise["DELETED"] }
 				return t
 			end,
 			get = function( info )
@@ -4660,7 +4626,7 @@ function ArkInventory.ConfigInternalCategoryCustomList( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.category.custom.show ~= 1,
+			hidden = config.category.custom.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			func = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				ArkInventory.ConfigInternalCategoryCustomDelete( id )
@@ -4674,7 +4640,7 @@ function ArkInventory.ConfigInternalCategoryCustomList( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.category.custom.show ~= 2,
+			hidden = config.category.custom.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			func = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				ArkInventory.ConfigInternalCategoryCustomRestore( id )
@@ -4686,7 +4652,7 @@ function ArkInventory.ConfigInternalCategoryCustomList( path )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_PURGE_DESC"], ArkInventory.Localise["CONFIG_CATEGORY_CUSTOM"] ),
 			type = "execute",
 			width = "half",
-			hidden = config.category.custom.show ~= 2,
+			hidden = config.category.custom.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			func = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				ArkInventory.ConfigInternalCategoryCustomPurge( id )
@@ -4698,50 +4664,29 @@ function ArkInventory.ConfigInternalCategoryCustomList( path )
 			name = ArkInventory.Localise["ENABLED"],
 			type = "toggle",
 			width = "half",
-			disabled = config.category.custom.show ~= 1,
+			disabled = config.category.custom.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			get = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local catset = ConfigGetNodeArg( info, #info - 3 )
 				catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-				return catset.category.active[ArkInventory.Const.Category.Type.Custom][id]
+				return catset.ca[ArkInventory.Const.Category.Type.Custom][id].active
 			end,
 			set = function( info, v )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local catset = ConfigGetNodeArg( info, #info - 3 )
 				catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-				catset.category.active[ArkInventory.Const.Category.Type.Custom][id] = v
+				catset.ca[ArkInventory.Const.Category.Type.Custom][id].active = v
 				ArkInventory.ItemCacheClear( )
 				ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
 			end,
 		},
-		autosell = {
-			order = 600,
-			name = ArkInventory.Localise["CONFIG_JUNK_SELL_AUTO"],
-			type = "toggle",
-			width = "half",
-			disabled = config.category.custom.show ~= 1,
-			get = function( info )
-				local id = ConfigGetNodeArg( info, #info - 1 )
-				local catset = ConfigGetNodeArg( info, #info - 3 )
-				catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-				return catset.category.junk[ArkInventory.Const.Category.Type.Custom][id]
-			end,
-			set = function( info, v )
-				local id = ConfigGetNodeArg( info, #info - 1 )
-				local catset = ConfigGetNodeArg( info, #info - 3 )
-				catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-				catset.category.junk[ArkInventory.Const.Category.Type.Custom][id] = v
-				ArkInventory.ItemCacheClear( )
-				ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
-			end,
-		},
-		
+		-- FIX ME - include the category actions
 		items = {
 			order = 1000,
 			name = ArkInventory.Localise["ITEMS"],
 			type = "group",
 			childGroups = "tree",
-			disabled = config.category.custom.show ~= 1,
+			disabled = config.category.custom.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			args = { },
 		},
 		
@@ -4751,11 +4696,11 @@ function ArkInventory.ConfigInternalCategoryCustomList( path )
 		
 		if not data.system then
 			
-			if ( data.used == "Y" and config.category.custom.show == 1 ) or ( data.used == "D" and config.category.custom.show == 2 ) then
+			if ( data.used == "Y" and config.category.custom.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE ) or ( data.used == "D" and config.category.custom.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED ) then
 				
 				local n = data.name
 				
-				if config.category.custom.sort.list == 1 then
+				if config.category.custom.sort.list == ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME then
 					n = string.format( "%s [%04i]", n, id )
 				else
 					n = string.format( "[%04i] %s", id, n )
@@ -4769,7 +4714,7 @@ function ArkInventory.ConfigInternalCategoryCustomList( path )
 					icon = function( info )
 						local catset = ConfigGetNodeArg( info, #info - 2 )
 						catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-						if catset.category.active[ArkInventory.Const.Category.Type.Custom][id] then
+						if catset.ca[ArkInventory.Const.Category.Type.Custom][id].active then
 							return ArkInventory.Const.Texture.CategoryEnabled
 						else
 							return ArkInventory.Const.Texture.CategoryDisabled
@@ -4802,7 +4747,8 @@ function ArkInventory.ConfigInternalCategoryCustomItemCategorySet( item, cat_num
 		cat_id = ArkInventory.CategoryIdBuild( ArkInventory.Const.Category.Type.Custom, cat_num )
 	end
 	
-	ArkInventory.db.option.catset.data[config.catset.selected].category.assign[item] = cat_id
+	ArkInventory.db.option.catset.data[config.catset.selected].ia[item].assign = cat_id
+	
 	return true
 	
 end
@@ -4844,7 +4790,7 @@ function ArkInventory.ConfigInternalCategoryCustomListItem( path )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["NAME"], [2] = ArkInventory.Localise["NUMBER"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME] = ArkInventory.Localise["NAME"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NUMBER] = ArkInventory.Localise["NUMBER"] }
 				return t
 			end,
 			get = function( info )
@@ -4932,9 +4878,9 @@ function ArkInventory.ConfigInternalCategoryCustomListItemList( path )
 	local catset = ArkInventory.db.option.catset.data[config.catset.selected]
 	local cat_select = ArkInventory.CategoryIdBuild( ArkInventory.Const.Category.Type.Custom, config.category.custom.selected )
 	
-	for item, cat_id in pairs( catset.category.assign ) do
+	for item, ia in pairs( catset.ia ) do
 		
-		if cat_id == cat_select then
+		if ia.assign == cat_select then
 			
 			local class, id, sb = string.match( item, "^(.+):(.+):(.+)$" )
 			id = tonumber( id )
@@ -4948,7 +4894,7 @@ function ArkInventory.ConfigInternalCategoryCustomListItemList( path )
 				n = string.format( " %s (%s)", ArkInventory.Localise["EMPTY"], ArkInventory.Const.Slot.Data[sb].name )
 			end
 			
-			if config.category.custom.sort.item == 1 then
+			if config.category.custom.sort.item == ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME then
 				n = string.format( "%s [%i]", n, id )
 			else
 				n = string.format( "[%06i] %s", id, n )
@@ -4964,7 +4910,7 @@ function ArkInventory.ConfigInternalCategoryCustomListItemList( path )
 --				icon = function( info )
 --					local catset = ConfigGetNodeArg( info, #info - 2 )
 --					catset = ArkInventory.ConfigInternalCategorysetGet( catset )
---					if catset.category.active[ArkInventory.Const.Category.Type.Custom][id] then
+--					if catset.data[ArkInventory.Const.Category.Type.Custom][id].active then
 --						return ArkInventory.Const.Texture.CategoryEnabled
 --					else
 --						return ArkInventory.Const.Texture.CategoryDisabled
@@ -4988,7 +4934,7 @@ function ArkInventory.ConfigInternalCategorysetDataRule( path )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["NAME"], [2] = ArkInventory.Localise["NUMBER"], [3] = ArkInventory.Localise["ORDER"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME] = ArkInventory.Localise["NAME"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NUMBER] = ArkInventory.Localise["NUMBER"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.ORDER] = ArkInventory.Localise["ORDER"] }
 				return t
 			end,
 			get = function( info )
@@ -5016,36 +4962,18 @@ function ArkInventory.ConfigInternalCategorysetDataRuleData( path )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local catset = ConfigGetNodeArg( info, #info - 3 )
 				catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-				return catset.category.active[ArkInventory.Const.Category.Type.Rule][id]
+				return catset.ca[ArkInventory.Const.Category.Type.Rule][id].active
 			end,
 			set = function( info, v )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local catset = ConfigGetNodeArg( info, #info - 3 )
 				catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-				catset.category.active[ArkInventory.Const.Category.Type.Rule][id] = v
+				catset.ca[ArkInventory.Const.Category.Type.Rule][id].active = v
 				ArkInventory.ItemCacheClear( )
 				ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
 			end,
 		},
-		autosell = {
-			order = 200,
-			name = ArkInventory.Localise["CONFIG_JUNK_SELL_AUTO"],
-			type = "toggle",
-			get = function( info )
-				local id = ConfigGetNodeArg( info, #info - 1 )
-				local catset = ConfigGetNodeArg( info, #info - 3 )
-				catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-				return catset.category.junk[ArkInventory.Const.Category.Type.Rule][id]
-			end,
-			set = function( info, v )
-				local id = ConfigGetNodeArg( info, #info - 1 )
-				local catset = ConfigGetNodeArg( info, #info - 3 )
-				catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-				catset.category.junk[ArkInventory.Const.Category.Type.Rule][id] = v
-				ArkInventory.ItemCacheClear( )
-				ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
-			end,
-		},
+		-- FIX ME - include the item actions
 	}
 	
 	for id, data in pairs( ArkInventory.db.option.category[ArkInventory.Const.Category.Type.Rule].data ) do
@@ -5056,9 +4984,9 @@ function ArkInventory.ConfigInternalCategorysetDataRuleData( path )
 				
 				local n = data.name
 			
-				if config.category.rule.sort == 1 then
+				if config.category.rule.sort == ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME then
 					n = string.format( "%s [%04i] [%04i]", n, id, data.order )
-				elseif config.category.rule.sort == 3 then
+				elseif config.category.rule.sort == ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.ORDER then
 					n = string.format( "[%04i] %s [%04i]", data.order, n, id )
 				else
 					n = string.format( "[%04i] %s [%04i]", id, n, data.order )
@@ -5076,7 +5004,7 @@ function ArkInventory.ConfigInternalCategorysetDataRuleData( path )
 						
 						local catset = ConfigGetNodeArg( info, #info - 2 )
 						catset = ArkInventory.ConfigInternalCategorysetGet( catset )
-						if catset.category.active[ArkInventory.Const.Category.Type.Rule][id] then
+						if catset.ca[ArkInventory.Const.Category.Type.Rule][id].active then
 							return ArkInventory.Const.Texture.CategoryEnabled
 						else
 							return ArkInventory.Const.Texture.CategoryDisabled
@@ -5105,7 +5033,7 @@ function ArkInventory.ConfigInternalDesign( )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_ADD_DESC"], ArkInventory.Localise["CONFIG_DESIGN"] ),
 			type = "input",
 			width = "double",
-			disabled = config.design.show ~= 1,
+			disabled = config.design.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			get = function( )
 				return ""
 			end,
@@ -5121,7 +5049,7 @@ function ArkInventory.ConfigInternalDesign( )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["NAME"], [2] = ArkInventory.Localise["NUMBER"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME] = ArkInventory.Localise["NAME"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NUMBER] = ArkInventory.Localise["NUMBER"] }
 				return t
 			end,
 			get = function( info )
@@ -5138,7 +5066,7 @@ function ArkInventory.ConfigInternalDesign( )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["ACTIVE"], [2] = ArkInventory.Localise["DELETED"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE] = ArkInventory.Localise["ACTIVE"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED] = ArkInventory.Localise["DELETED"] }
 				return t
 			end,
 			get = function( info )
@@ -5286,7 +5214,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local style = ArkInventory.ConfigInternalDesignGet( id )
-				return style.system or config.design.show ~= 1
+				return style.system or config.design.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE
 			end,
 			get = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
@@ -5307,7 +5235,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.design.show ~= 1,
+			hidden = config.design.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local style = ArkInventory.ConfigInternalDesignGet( id )
@@ -5326,7 +5254,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.design.show ~= 2,
+			hidden = config.design.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local style = ArkInventory.ConfigInternalDesignGet( id )
@@ -5343,7 +5271,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_COPY_DESC"], ArkInventory.Localise["CONFIG_DESIGN"] ),
 			type = "select",
 			width = "double",
-			hidden = config.design.show ~= 1,
+			hidden = config.design.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			values = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local t = { }
@@ -5374,7 +5302,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_PURGE_DESC"], ArkInventory.Localise["CONFIG_DESIGN"] ),
 			type = "execute",
 			width = "half",
-			hidden = config.design.show ~= 2,
+			hidden = config.design.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			func = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				ArkInventory.ConfigInternalDesignPurge( id )
@@ -5386,7 +5314,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 			name = ArkInventory.Localise["CONFIG_DESIGN_WINDOW"],
 			type = "group",
 			childGroups = "tab",
-			disabled = config.design.show ~= 1,
+			disabled = config.design.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			args = {
 				style = {
 					order = 100,
@@ -6605,7 +6533,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 								},
 								when = {
 									order = 200,
-									name = ArkInventory.Localise["CONFIG_SORTING_WHEN"],
+									name = ArkInventory.Localise["WHEN"],
 									desc = string.format( "%s\n\n\n%s: %s\n\n%s: %s\n\n%s: %s", ArkInventory.Localise["CONFIG_SORTING_WHEN_DESC"], ArkInventory.Localise["CONFIG_SORTING_WHEN_INSTANT"], ArkInventory.Localise["CONFIG_SORTING_WHEN_INSTANT_DESC"], ArkInventory.Localise["CONFIG_SORTING_WHEN_OPEN"], ArkInventory.Localise["CONFIG_SORTING_WHEN_OPEN_DESC"], ArkInventory.Localise["CONFIG_SORTING_WHEN_MANUAL"], ArkInventory.Localise["CONFIG_SORTING_WHEN_MANUAL_DESC"] ),
 									type = "select",
 									values = function( )
@@ -6651,7 +6579,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 			name = ArkInventory.Localise["CONFIG_DESIGN_BAR"],
 			type = "group",
 			childGroups = "tab",
-			disabled = config.design.show ~= 1,
+			disabled = config.design.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			args = {
 				style = {
 					order = 100,
@@ -7234,7 +7162,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 			name = ArkInventory.Localise["ITEMS"],
 			type = "group",
 			childGroups = "tab",
-			disabled = config.design.show ~= 1,
+			disabled = config.design.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			args = {
 				style = {
 					order = 100,
@@ -7475,29 +7403,7 @@ function ArkInventory.ConfigInternalDesignData( path )
 										local id = ConfigGetNodeArg( info, #info - 4 )
 										local style = ArkInventory.ConfigInternalDesignGet( id )
 										style.slot.cooldown.show = v
-										ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Refresh )
-									end,
-								},
-								global = {
-									order = 200,
-									name = ArkInventory.Localise["CONFIG_DESIGN_ITEM_COOLDOWN_GLOBAL"],
-									desc = ArkInventory.Localise["CONFIG_DESIGN_ITEM_COOLDOWN_GLOBAL_DESC"],
-									type = "toggle",
-									disabled = function( info )
-										local id = ConfigGetNodeArg( info, #info - 4 )
-										local style = ArkInventory.ConfigInternalDesignGet( id )
-										return not style.slot.cooldown.show
-									end,
-									get = function( info )
-										local id = ConfigGetNodeArg( info, #info - 4 )
-										local style = ArkInventory.ConfigInternalDesignGet( id )
-										return style.slot.cooldown.global
-									end,
-									set = function( info, v )
-										local id = ConfigGetNodeArg( info, #info - 4 )
-										local style = ArkInventory.ConfigInternalDesignGet( id )
-										style.slot.cooldown.global = v
-										ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Refresh )
+										ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
 									end,
 								},
 								combat = {
@@ -7519,6 +7425,24 @@ function ArkInventory.ConfigInternalDesignData( path )
 										local id = ConfigGetNodeArg( info, #info - 4 )
 										local style = ArkInventory.ConfigInternalDesignGet( id )
 										style.slot.cooldown.combat = v
+									end,
+								},
+								numbers = {
+									order = 400,
+									name = ArkInventory.Localise["CONFIG_DESIGN_ITEM_COOLDOWN_NUMBER"],
+									desc = ArkInventory.Localise["CONFIG_IS_CVAR"],
+									type = "toggle",
+									disabled = function( info )
+										local id = ConfigGetNodeArg( info, #info - 4 )
+										local style = ArkInventory.ConfigInternalDesignGet( id )
+										return not style.slot.cooldown.show
+									end,
+									get = function( info )
+										return ArkInventory.CrossClient.GetCVarBool( "countdownForCooldowns" )
+									end,
+									set = function( info, v )
+										ArkInventory.CrossClient.SetCVar( "countdownForCooldowns", v and 1 or 0 )
+										ArkInventory.Frame_Main_Generate( nil, ArkInventory.Const.Window.Draw.Refresh )
 									end,
 								},
 							},
@@ -9086,13 +9010,13 @@ function ArkInventory.ConfigInternalDesignData( path )
 	
 	for id, data in pairs( ArkInventory.db.option.design.data ) do
 		
-		if ( data.used == "Y" and config.design.show == 1 ) or ( data.used == "D" and config.design.show == 2 ) then
+		if ( data.used == "Y" and config.design.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE ) or ( data.used == "D" and config.design.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED ) then
 			
 			if not data.system then
 				
 				local n = data.name
 				
-				if config.design.sort == 1 then
+				if config.design.sort == ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME then
 					n = string.format( "%s [%04i]", n, id )
 				else
 					n = string.format( "[%04i] %s", id, n )
@@ -9120,7 +9044,7 @@ function ArkInventory.ConfigInternalProfile( )
 	
 	config.profile.current = config.me.player.data.profile
 	
-	if config.profile.show == 1 then
+	if config.profile.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE then
 		config.profile.selected = config.profile.current
 	else
 		config.profile.selected = nil
@@ -9136,7 +9060,7 @@ function ArkInventory.ConfigInternalProfile( )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_ADD_DESC"], ArkInventory.Localise["CONFIG_PROFILE"] ),
 			type = "input",
 			width = "double",
-			disabled = config.profile.show ~= 1,
+			disabled = config.profile.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			get = function( )
 				return ""
 			end,
@@ -9151,7 +9075,7 @@ function ArkInventory.ConfigInternalProfile( )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["NAME"], [2] = ArkInventory.Localise["NUMBER"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME] = ArkInventory.Localise["NAME"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NUMBER] = ArkInventory.Localise["NUMBER"] }
 				return t
 			end,
 			get = function( info )
@@ -9169,7 +9093,7 @@ function ArkInventory.ConfigInternalProfile( )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["ACTIVE"], [2] = ArkInventory.Localise["DELETED"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE] = ArkInventory.Localise["ACTIVE"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED] = ArkInventory.Localise["DELETED"] }
 				return t
 			end,
 			get = function( info )
@@ -9190,7 +9114,7 @@ function ArkInventory.ConfigInternalProfile( )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_IMPORT_DESC"], ArkInventory.Localise["CONFIG_PROFILE"] ),
 			type = "execute",
 			width = "half",
-			disabled = ( config.profile.show ~= 1 ),
+			disabled = ( config.profile.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE ),
 			func = function( )
 				ArkInventory.Lib.StaticDialog:Spawn( "PROFILE_IMPORT" )
 			end,
@@ -9213,7 +9137,7 @@ function ArkInventory.ConfigInternalProfileData( path )
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local style = ArkInventory.ConfigInternalProfileGet( id )
-				return style.system or config.profile.show ~= 1
+				return style.system or config.profile.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE
 			end,
 			get = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
@@ -9234,7 +9158,7 @@ function ArkInventory.ConfigInternalProfileData( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.profile.show ~= 1,
+			hidden = config.profile.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				if id == config.profile.current then
@@ -9272,7 +9196,7 @@ function ArkInventory.ConfigInternalProfileData( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.profile.show ~= 1,
+			hidden = config.profile.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			disabled = function( info )
 				
 				local id = ConfigGetNodeArg( info, #info - 1 )
@@ -9296,7 +9220,7 @@ function ArkInventory.ConfigInternalProfileData( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.profile.show ~= 2,
+			hidden = config.profile.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local style = ArkInventory.ConfigInternalProfileGet( id )
@@ -9313,7 +9237,7 @@ function ArkInventory.ConfigInternalProfileData( path )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_COPY_DESC"], ArkInventory.Localise["CONFIG_PROFILE"] ),
 			type = "select",
 			width = "double",
-			hidden = config.profile.show ~= 1,
+			hidden = config.profile.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			values = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local t = { }
@@ -9344,7 +9268,7 @@ function ArkInventory.ConfigInternalProfileData( path )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_PURGE_DESC"], ArkInventory.Localise["CONFIG_PROFILE"] ),
 			type = "execute",
 			width = "half",
-			hidden = config.profile.show ~= 2,
+			hidden = config.profile.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			func = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				ArkInventory.ConfigInternalProfilePurge( id )
@@ -9359,7 +9283,7 @@ function ArkInventory.ConfigInternalProfileData( path )
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local profile = ArkInventory.ConfigInternalProfileGet( id )
-				return profile.system or config.profile.show ~= 1
+				return profile.system or config.profile.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE
 			end,
 			func = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
@@ -9402,13 +9326,13 @@ The reason for those Blueprint objects being separate from the profile is so tha
 	
 	for id, data in pairs( ArkInventory.db.option.profile.data ) do
 		
-		if ( data.used == "Y" and config.profile.show == 1 ) or ( data.used == "D" and config.profile.show == 2 ) then
+		if ( data.used == "Y" and config.profile.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE ) or ( data.used == "D" and config.profile.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED ) then
 			
 			if not data.system then
 				
 				local n = data.name
 				
-				if config.profile.sort == 1 then
+				if config.profile.sort == ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME then
 					n = string.format( "%s [%04i]", n, id )
 				else
 					n = string.format( "[%04i] %s", id, n )
@@ -9457,35 +9381,52 @@ function ArkInventory.ConfigInternalProfileControl( path )
 					end,
 					width = "double",
 					values = function( info )
-						local t = { }
-						for id, data in pairs( ArkInventory.db.option.design.data ) do
-							if data.used == "Y" then
-								local n = data.name
-								if data.system then
-									n = string.format( "* %s", n )
-								end
-								t[id] = string.format( "[%04i] %s", id, n )
-							end
-						end
-						return t
-					end,
-					get = function( info )
+						
 						local id = ConfigGetNodeArg( info, #info - 4 )
 						local profile = ArkInventory.ConfigInternalProfileGet( id )
 						local loc_id = ConfigGetNodeArg( info, #info - 2 )
 						local style = profile.location[loc_id].style
-						if ArkInventory.db.option.design.data[style].used == "Y" then
-							return style
-						else
-							return 9999
+						
+						local t = { }
+						for id, data in pairs( ArkInventory.db.option.design.data ) do
+							
+							local n = data.name
+							
+							if data.system then
+								n = string.format( "* %s", n )
+							end
+							
+							if id == style and data.used == "D" then
+								n = string.format( "%s%s - (%s)", RED_FONT_COLOR_CODE, n, ArkInventory.Localise["DELETED"] )
+							end
+							
+							if data.used == "Y" or id == style then
+								t[id] = string.format( "[%04i] %s", id, n )
+							end
+							
 						end
+						
+						return t
+						
 					end,
-					set = function( info, v )
+					get = function( info )
+						
 						local id = ConfigGetNodeArg( info, #info - 4 )
 						local profile = ArkInventory.ConfigInternalProfileGet( id )
 						local loc_id = ConfigGetNodeArg( info, #info - 2 )
+						
+						return profile.location[loc_id].style
+						
+					end,
+					set = function( info, v )
+						
+						local id = ConfigGetNodeArg( info, #info - 4 )
+						local profile = ArkInventory.ConfigInternalProfileGet( id )
+						local loc_id = ConfigGetNodeArg( info, #info - 2 )
+						
 						profile.location[loc_id].style = v
 						ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Restart )
+						
 					end,
 				},
 				style_buffer = {
@@ -9504,35 +9445,52 @@ function ArkInventory.ConfigInternalProfileControl( path )
 					end,
 					width = "double",
 					values = function( info )
-						local t = { }
-						for id, data in pairs( ArkInventory.db.option.design.data ) do
-							if data.used == "Y" then
-								local n = data.name
-								if data.system then
-									n = string.format( "* %s", n )
-								end
-								t[id] = string.format( "[%04i] %s", id, n )
-							end
-						end
-						return t
-					end,
-					get = function( info )
+						
 						local id = ConfigGetNodeArg( info, #info - 4 )
 						local profile = ArkInventory.ConfigInternalProfileGet( id )
 						local loc_id = ConfigGetNodeArg( info, #info - 2 )
 						local layout = profile.location[loc_id].layout
-						if ArkInventory.db.option.design.data[layout].used == "Y" then
-							return layout
-						else
-							return 9999
+						
+						local t = { }
+						for id, data in pairs( ArkInventory.db.option.design.data ) do
+							
+							local n = data.name
+							
+							if data.system then
+								n = string.format( "* %s", n )
+							end
+							
+							if id == layout and data.used == "D" then
+								n = string.format( "%s%s - (%s)", RED_FONT_COLOR_CODE, n, ArkInventory.Localise["DELETED"] )
+							end
+							
+							if data.used == "Y" or id == layout then
+								t[id] = string.format( "[%04i] %s", id, n )
+							end
+							
 						end
+						
+						return t
+						
 					end,
-					set = function( info, v )
+					get = function( info )
+						
 						local id = ConfigGetNodeArg( info, #info - 4 )
 						local profile = ArkInventory.ConfigInternalProfileGet( id )
 						local loc_id = ConfigGetNodeArg( info, #info - 2 )
+						
+						return profile.location[loc_id].layout
+						
+					end,
+					set = function( info, v )
+						
+						local id = ConfigGetNodeArg( info, #info - 4 )
+						local profile = ArkInventory.ConfigInternalProfileGet( id )
+						local loc_id = ConfigGetNodeArg( info, #info - 2 )
+						
 						profile.location[loc_id].layout = v
 						ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Restart )
+						
 					end,
 				},
 				layout_buffer = {
@@ -9551,35 +9509,52 @@ function ArkInventory.ConfigInternalProfileControl( path )
 					end,
 					width = "double",
 					values = function( info )
-						local t = { }
-						for id, data in pairs( ArkInventory.db.option.catset.data ) do
-							if data.used == "Y" then
-								local n = data.name
-								if data.system then
-									n = string.format( "* %s", n )
-								end
-								t[id] = string.format( "[%04i] %s", id, n )
-							end
-						end
-						return t
-					end,
-					get = function( info )
+						
 						local id = ConfigGetNodeArg( info, #info - 4 )
 						local profile = ArkInventory.ConfigInternalProfileGet( id )
 						local loc_id = ConfigGetNodeArg( info, #info - 2 )
 						local catset = profile.location[loc_id].catset
-						if ArkInventory.db.option.catset.data[catset].used == "Y" then
-							return catset
-						else
-							return 9999
+						
+						local t = { }
+						for id, data in pairs( ArkInventory.db.option.catset.data ) do
+							
+							local n = data.name
+							
+							if data.system then
+								n = string.format( "* %s", n )
+							end
+							
+							if id == catset and data.used == "D" then
+								n = string.format( "%s%s - (%s)", RED_FONT_COLOR_CODE, n, ArkInventory.Localise["DELETED"] )
+							end
+							
+							if data.used == "Y" or id == catset then
+								t[id] = string.format( "[%04i] %s", id, n )
+							end
+							
 						end
+						
+						return t
+						
 					end,
-					set = function( info, v )
+					get = function( info )
+						
 						local id = ConfigGetNodeArg( info, #info - 4 )
 						local profile = ArkInventory.ConfigInternalProfileGet( id )
 						local loc_id = ConfigGetNodeArg( info, #info - 2 )
+						
+						return profile.location[loc_id].catset
+						
+					end,
+					set = function( info, v )
+						
+						local id = ConfigGetNodeArg( info, #info - 4 )
+						local profile = ArkInventory.ConfigInternalProfileGet( id )
+						local loc_id = ConfigGetNodeArg( info, #info - 2 )
+						
 						profile.location[loc_id].catset = v
 						ArkInventory.Frame_Main_Generate( loc_id, ArkInventory.Const.Window.Draw.Restart )
+						
 					end,
 				},
 			},
@@ -9964,7 +9939,7 @@ function ArkInventory.ConfigInternalAccount( )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_ADD_DESC"], ArkInventory.Localise["ACCOUNT"] ),
 			type = "input",
 			width = "double",
-			disabled = config.account.show ~= 1,
+			disabled = config.account.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			get = function( )
 				return ""
 			end,
@@ -9980,7 +9955,7 @@ function ArkInventory.ConfigInternalAccount( )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["NAME"], [2] = ArkInventory.Localise["NUMBER"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NAME] = ArkInventory.Localise["NAME"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NUMBER] = ArkInventory.Localise["NUMBER"] }
 				return t
 			end,
 			get = function( info )
@@ -9997,7 +9972,7 @@ function ArkInventory.ConfigInternalAccount( )
 			type = "select",
 			width = "half",
 			values = function( )
-				local t = { [1] = ArkInventory.Localise["ACTIVE"], [2] = ArkInventory.Localise["DELETED"] }
+				local t = { [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE] = ArkInventory.Localise["ACTIVE"], [ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED] = ArkInventory.Localise["DELETED"] }
 				return t
 			end,
 			get = function( info )
@@ -10027,7 +10002,7 @@ function ArkInventory.ConfigInternalAccountData( path )
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local cat = ArkInventory.ConfigInternalAccountGet( id )
-				return cat.system or config.account.show ~= 1
+				return cat.system or config.account.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE
 			end,
 			get = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
@@ -10048,7 +10023,7 @@ function ArkInventory.ConfigInternalAccountData( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.account.show ~= 1,
+			hidden = config.account.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE,
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local cat = ArkInventory.ConfigInternalAccountGet( id )
@@ -10067,7 +10042,7 @@ function ArkInventory.ConfigInternalAccountData( path )
 			end,
 			type = "execute",
 			width = "half",
-			hidden = config.account.show ~= 2,
+			hidden = config.account.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			disabled = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				local cat = ArkInventory.ConfigInternalAccountGet( id )
@@ -10084,7 +10059,7 @@ function ArkInventory.ConfigInternalAccountData( path )
 			desc = string.format( ArkInventory.Localise["CONFIG_LIST_PURGE_DESC"], ArkInventory.Localise["ACCOUNT"] ),
 			type = "execute",
 			width = "half",
-			hidden = config.account.show ~= 2,
+			hidden = config.account.show ~= ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED,
 			func = function( info )
 				local id = ConfigGetNodeArg( info, #info - 1 )
 				ArkInventory.ConfigInternalAccountPurge( id )
@@ -10105,12 +10080,12 @@ function ArkInventory.ConfigInternalAccountData( path )
 	-- load account data
 	for id, data in pairs( ArkInventory.db.account.data ) do
 		
-		if ( data.used == "Y" and config.account.show == 1 ) or ( data.used == "D" and config.account.show == 2 ) then
+		if ( data.used == "Y" and config.account.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.ACTIVE ) or ( data.used == "D" and config.account.show == ArkInventory.Const.ENUM.CATEGORY.LIST.SHOW.DELETED ) then
 			
 			local n = string.format( "%s [%03i]", data.name, id )
 			local o = 500
 			
-			if config.account.sort == 2 then
+			if config.account.sort == ArkInventory.Const.ENUM.CATEGORY.LIST.SORT.NUMBER then
 				--n = string.format( "%s [%03i]", data.name, id )
 				o = id
 			end
