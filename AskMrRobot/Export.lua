@@ -114,11 +114,11 @@ local _lastBankSlotId = nil
 local _bankOpen = false
 
 local function scanBag(bagId, isBank, bagTable, bagItemsWithCount)
-	local numSlots = GetContainerNumSlots(bagId)
+	local numSlots = C_Container.GetContainerNumSlots(bagId)
 	--local loc = ItemLocation.CreateEmpty()
 	local item
 	for slotId = 1, numSlots do
-		local _, itemCount, _, _, _, _, itemLink = GetContainerItemInfo(bagId, slotId)
+		local _, itemCount, _, _, _, _, itemLink = C_Container.GetContainerItemInfo(bagId, slotId)
 		if itemLink ~= nil then
 			local itemData = Amr.Serializer.ParseItemLink(itemLink)
 			if itemData ~= nil then
