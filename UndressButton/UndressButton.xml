@@ -1,0 +1,58 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+	<Script file="UndressButton.lua"/>
+	<Button name="DressUpFrameUndressButton" parent="DressUpFrame" inherits="UIPanelButtonTemplate" text="Undress">
+		<Size>
+			<AbsDimension x="80" y="22"/>
+		</Size>
+		<Anchors>
+			<Anchor point="RIGHT" relativeTo="DressUpFrameResetButton" relativePoint="LEFT">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				UndressButton_Load(self);
+			</OnLoad>
+			<OnEvent>
+				UndressButton_Event(self,event,...);
+			</OnEvent>
+			<OnClick>
+				DressUpFrame.ModelScene:GetPlayerActor():Undress();
+				PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON);
+			</OnClick>
+		</Scripts>
+	</Button>
+	<Button name="DressUpFrameDressTargetButton" parent="DressUpFrame" inherits="UIPanelButtonTemplate" text="Target">
+		<Size>
+			<AbsDimension x="80" y="22"/>
+		</Size>
+		<Anchors>
+			<Anchor point="RIGHT" relativeTo="DressUpFrameUndressButton" relativePoint="LEFT">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				self:RegisterForClicks("LeftButtonDown", "RightButtonDown")
+			</OnLoad>
+			<OnShow>
+				UndressButton_DressUpTarget("dress");
+			</OnShow>
+			<OnClick>
+				if (button == "LeftButton") then
+					UndressButton_DressUpTarget("inspect");
+					PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON);
+				else
+					UndressButton_DressUpTarget("dress");
+					PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON);
+				end
+				
+			</OnClick>
+		</Scripts>
+	</Button>
+</Ui>
