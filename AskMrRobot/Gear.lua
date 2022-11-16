@@ -783,8 +783,8 @@ local function createAmrEquipmentSet()
 
 	-- clear any currently ignored slots, ignore shirt and tabard
     C_EquipmentSet.ClearIgnoredSlotsForSave()
-    -- C_EquipmentSet.IgnoreSlotForSave(INVSLOT_BODY) -- shirt
-    -- C_EquipmentSet.IgnoreSlotForSave(INVSLOT_TABARD)
+    C_EquipmentSet.IgnoreSlotForSave(INVSLOT_BODY) -- shirt
+    C_EquipmentSet.IgnoreSlotForSave(INVSLOT_TABARD)
 		
 	-- for now use icon of the spec
 	local _, specName, _, setIcon = GetSpecializationInfo(GetSpecialization())
