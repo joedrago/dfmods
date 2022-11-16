@@ -26,6 +26,7 @@ Globals.CLASS_INFO = {
   SHAMAN = {7, 64, "MAIL"},
   WARLOCK = {9, 256, "CLOTH"},
   WARRIOR = {1, 1, "PLATE"},
+  EVOKER =  {13, 4096, "MAIL"},
 }
 
 
@@ -69,7 +70,6 @@ for class, data in pairs(Globals.CLASS_INFO) do
   local type = data[3]
   Globals.ARMOR_CLASSES[type][id] = true
 end
-
 
 Globals.locationDrowpDown = {
   [2] = INVTYPE_HEAD,
