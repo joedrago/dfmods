@@ -6,11 +6,11 @@ ArkInventory.Tools = { }
 
 
 --[[
--- /dump GetItemClassInfo( ArkInventory.Const.ENUM.ITEMCLASS.ARMOR.PARENT )
--- /dump GetItemSubClassInfo( ArkInventory.Const.ENUM.ITEMCLASS.ARMOR.PARENT, ArkInventory.Const.ENUM.ITEMCLASS.ARMOR.LEATHER )
+-- /dump GetItemClassInfo( ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT )
+-- /dump GetItemSubClassInfo( ArkInventory.ENUM.ITEM.TYPE.ARMOR.PARENT, ArkInventory.ENUM.ITEM.TYPE.ARMOR.LEATHER )
 
 for x = 4, 4 do
-	--local x = ArkInventory.Const.ENUM.ITEMCLASS.TRADEGOODS.HERBS
+	--local x = ArkInventory.ENUM.ITEM.TYPE.TRADEGOODS.HERBS
 	local n = GetItemClassInfo( x )
 	--if n and n ~= "" then
 		ArkInventory.Output( "----------" )
@@ -41,13 +41,13 @@ end
 
 
 --[[
-local z = "numbers for cooldowns"
+local z = "destroy"
 ArkInventory.Output( "search=", z )
 for k, v in pairs (_G) do
 	if type( k ) == "string" and type( v ) == "string" then
 		--if string.match( string.lower( k ), string.lower( z ) ) then -- found in key
-		if string.match( string.lower( v ), string.lower( z ) ) then -- found in value
-		--if string.lower( v ) == string.lower( z ) then -- exact match with value
+		--if string.match( string.lower( v ), string.lower( z ) ) then -- found in value
+		if string.lower( v ) == string.lower( z ) then -- exact match with value
 			ArkInventory.Output( k, "=", v )
 		end
 	end

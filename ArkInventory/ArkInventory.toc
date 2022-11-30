@@ -1,10 +1,10 @@
-## Interface: 100000
+## Interface: 100002
 
 ## Title: ArkInventory
 ## Author: Arkayenro - Khaz'goroth
 ## Email: arkayenro at gmail dot com
-## Version: 31004.17
-## X-ReleaseType: Alpha
+## Version: 31010
+## X-ReleaseType: 
 ## SavedVariables: ARKINVDB
 
 ## Notes: Allows you to view all items from all your characters on the same account, when-ever and where-ever you want.

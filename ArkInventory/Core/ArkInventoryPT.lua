@@ -80,6 +80,8 @@ ArkInventory.Lib.PeriodicTable:AddData( "ArkInventory", "1", {
 	["ArkInventory.System.Junk.Achievement.Silver in the City"] = "43643,43644,43675,43676,43677,43678,43679,43680,43681,43682,43683,43684,43685,43686,43687",
 	["ArkInventory.System.Junk.Achievement.Theres Gold In That There Fountain"] = "43627,43628,43629,43630,43631,43632,43633,43634,43635,43636,43637,43638,43639,43640,43641",
 	
+	["ArkInventory.System.Heirloom.DragonFlight.PrePatch"] = "199836,199837,199838,199839",
+	
 	
 	-- used for both item to currency mappings (itemid:currencyid), and just knowing what items are currencies
 	["ArkInventory.System.Currency.Shadowlands.Other"] = "184304,190189",

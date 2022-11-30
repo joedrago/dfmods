@@ -359,142 +359,101 @@ end
 
 
 
-
-ArkInventory.Const = { -- constants
-	
-	Program = {
-		Name = "ArkInventory",
-		Version = nil, -- calculated at load
+ArkInventory.ENUM = {
+	ACTION = {
+		WHEN = {
+			DISABLED = 0,
+			MANUAL = 1,
+			AUTO = 2,
+		},
+		TYPE = {
+			IGNORE = 0,
+			VENDOR = 1,
+			MAIL = 2,
+			MOVE = 3,
+		},
 	},
-	
-	BLIZZARD = {
-		
---		/dump ArkInventory.Const.BLIZZARD.TOC
-		TOC = select( 4, GetBuildInfo( ) ) or 0,
-		
-		CLIENT = {
-			ID = nil,
-			NAME = "",
-			EXPANSION = { },
-			PTR = 0.1,
-			BETA = 0.2,
-		},
-		
-		GLOBAL = {
-			TOOLTIP = {
-				UPDATETIMER = 1, --TOOLTIP_UPDATE_TIME = 0.2
-			},
-			FONT = {
-				COLOR = {
-					UNUSABLE1 = "fefe1f1f", -- shadowlands
-					UNUSABLE2 = "ffff2020", -- dragonflight
-				},
-			},
-			PROFESSIONRANK = {
-				COLOR = {
-					[0] = { r = 255 / 255, g = 255 / 255, b = 255 / 255 },
-					[1] = { r = 169 / 255, g = 113 / 255, b =  66 / 255 },
-					[2] = { r = 192 / 255, g = 192 / 255, b = 192 / 255 },
-					[3] = { r = 215 / 255, g = 190 / 255, b = 105 / 255 },
-					[4] = { r =  80 / 255, g = 200 / 255, b = 120 / 255 },
-					[5] = { r = 222 / 255, g = 129 / 255, b =  35 / 255 },
-				},
-				OFFSET = {
-					[1] = { x = -5, y = -5 },
-					[2] = { x = -1, y = -5 },
-					[3] = { x = -1, y = -3 },
-					[4] = { x = -1, y = -1 },
-					[5] = { x = -1, y = -1 },
-				}
-			},
-			CONTAINER = {
-				SLOTSIZE = 37,
-				NUM_SLOT_MAX = MAX_CONTAINER_ITEMS or 36,
-				FILTER = {
-					IGNORECLEANUP = LE_BAG_FILTER_FLAG_IGNORE_CLEANUP or ( Enum.BagSlotFlags and Enum.BagSlotFlags.DisableAutoSort ) or 1,
-					ASSIGN_TO_BAG = BAG_FILTER_ASSIGN_TO,
-					LABELS = BAG_FILTER_LABELS,
-				},
-				NUM_BAGS_NORMAL = NUM_BAG_SLOTS or NUM_BAG_FRAMES or 4,
-				NUM_BAGS_REAGENT = NUM_REAGENTBAG_FRAMES or 0,
-				NUM_BAGS = 0, -- calculated further down
-			},
-			BANK = {
-				NUM_BAGS = NUM_BANKBAGSLOTS or 7,
-				NUM_SLOTS = NUM_BANKGENERIC_SLOTS or 7 * 4,
-			},
-			REAGENTBANK = {
-				NUM_SLOTS = 7 * 7 * 2,
-			},
-			GUILDBANK = {
-				NUM_TABS = MAX_GUILDBANK_TABS,
-				WIDTH = NUM_GUILDBANK_COLUMNS or 14,
-				HEIGHT = NUM_SLOTS_PER_GUILDBANK_GROUP or 7,
-				SLOTS_PER_TAB = MAX_GUILDBANK_SLOTS_PER_TAB or 14 * 7,
-				LOG_TIME_PREPEND = GUILD_BANK_LOG_TIME_PREPEND or "|cff009999  ",
-			},
-			VOIDSTORAGE = {
-				NUM_SLOT_MAX = VOID_STORAGE_MAX or 80,
-				NUM_PAGES = VOID_STORAGE_PAGES or 2,
-			},
-			PET = {
-				FILTER = {
-					COLLECTED = LE_PET_JOURNAL_FILTER_COLLECTED or 1,
-					NOTCOLLECTED = LE_PET_JOURNAL_FILTER_NOT_COLLECTED or 2,
-				},
-				CAGE_ITEMID = 82800,
-			},
-			MAILBOX = {
-				NUM_ATTACHMENT_MAX = ATTACHMENTS_MAX_RECEIVE,
-			},
-		},
-		
-		FUNCTION = {
-			GETITEMINFO = {
-				NAME = 1,
-				LINK = 2,
-				QUALITY = 3,
-				ILVL_BASE = 4,
-				USELEVEL = 5,
-				TYPE = 6,
-				SUBTYPE = 7,
-				STACKSIZE = 8,
-				EQUIP = 9,
-				TEXTURE = 10,
-				VENDORPRICE = 11,
-				TYPEID = 12,
-				SUBTYPEID = 13,
-				BINDING = 14,
-				EXPANSION = 15,
-				SETID = 16,
-				CRAFT = 17,
-			},
-			GETITEMINFOINSTANT = {
-				ID = 1,
-				TYPE = 2,
-				SUBTYPE = 3,
-				EQUIP = 4,
-				TEXTURE = 5,
-				TYPEID = 6,
-				SUBTYPEID = 7,
-			},
-			GETSPELLINFO = {
-				NAME = 1,
-				TEXTURE = 3,
-			}
-		},
-		
+	ANCHOR = {
+		DEFAULT = 0,
+		BOTTOMRIGHT = 1,
+		BOTTOMLEFT = 2,
+		TOPLEFT = 3,
+		TOPRIGHT = 4,
+		TOP = 5,
+		BOTTOM = 6,
+		LEFT = 7,
+		RIGHT = 8,
+		CENTER = 9,
 	},
-	
-	ENUM = {
-		BAGINDEX = {
+	BAG = {
+		INDEX = {
 			BACKPACK = BACKPACK_CONTAINER or ( Enum.BagIndex and Enum.BagIndex.Backpack ) or 0,
 			BANK = BANK_CONTAINER or ( Enum.BagIndex and Enum.BagIndex.Bank ) or -1,
 			REAGENTBANK = REAGENTBANK_CONTAINER or ( Enum.BagIndex and Enum.BagIndex.Reagentbank ) or -3,
 			REAGENTBAG = ( Enum.BagIndex and Enum.BagIndex.Reagentbag ) or 5,
 			KEYRING = KEYRING_CONTAINER or ( Enum.BagIndex and Enum.BagIndex.Keyring ) or -2
 		},
-		ITEMCLASS = {
+		OPENCLOSE = {
+			NO = 0,
+			YES = 1,
+			ALWAYS = 2,
+		},
+	},
+	BATTLEPET = {
+		ENEMY = LE_BATTLE_PET_ENEMY or 2,
+	},
+	BIND = { -- ITEM_BINDx
+		NEVER = 0,
+		USE = 1,
+		EQUIP = 2,
+		PICKUP = 3,
+		ACCOUNT = 4,
+	},
+	BUTTONID = {
+		MainMenu = 0,
+		Close = 1,
+		EditMode = 2,
+		Rules = 3,
+		Search = 4,
+		SwitchCharacter = 5,
+		SwitchLocation = 6,
+		Restack = 7,
+		Changer = 8,
+		Refresh = 9,
+		Actions = 10,
+	},
+	DIRECTION = {
+		HORIZONTAL = 1,
+		VERTICAL = 2,
+	},
+	EXPANSION = {
+		--CURRENT = set elsewhere,
+		DRAGONFLIGHT = LE_EXPANSION_DRAGONFLIGHT or 9,
+		SHADOWLANDS = LE_EXPANSION_SHADOWLANDS or 8,
+		BFA = LE_EXPANSION_BATTLE_FOR_AZEROTH or 7,
+		LEGION = LE_EXPANSION_LEGION or 6,
+		DRAENOR = LE_EXPANSION_WARLORDS_OF_DRAENOR or 5,
+		PANDARIA = LE_EXPANSION_MISTS_OF_PANDARIA or 4,
+		CATACLYSM = LE_EXPANSION_CATACLYSM or 3,
+		WRATH = LE_EXPANSION_WRATH_OF_THE_LICH_KING or 2,
+		TBC = LE_EXPANSION_BURNING_CRUSADE or 1,
+		CLASSIC = LE_EXPANSION_CLASSIC or 0,
+	},
+	ITEM = {
+		QUALITY = {
+			MISSING = -2,
+			UNKNOWN = -1,
+			POOR = ( Enum.ItemQuality and Enum.ItemQuality.Poor ) or LE_ITEM_QUALITY_POOR or 0,
+			STANDARD = ( Enum.ItemQuality and Enum.ItemQuality.Standard ) or LE_ITEM_QUALITY_COMMON or 1,
+			GOOD = ( Enum.ItemQuality and Enum.ItemQuality.Good )or LE_ITEM_QUALITY_UNCOMMON or 2,
+			RARE = ( Enum.ItemQuality and Enum.ItemQuality.Rare ) or LE_ITEM_QUALITY_RARE or 3,
+			EPIC = ( Enum.ItemQuality and Enum.ItemQuality.Epic ) or LE_ITEM_QUALITY_EPIC or 4,
+			LEGENDARY = ( Enum.ItemQuality and Enum.ItemQuality.Legendary ) or LE_ITEM_QUALITY_LEGENDARY or 5,
+			ARTIFACT = ( Enum.ItemQuality and Enum.ItemQuality.Artifact ) or LE_ITEM_QUALITY_ARTIFACT or 6,
+			HEIRLOOM = ( Enum.ItemQuality and Enum.ItemQuality.Heirloom ) or LE_ITEM_QUALITY_HEIRLOOM or 7,
+			WOWTOKEN = ( Enum.ItemQuality and Enum.ItemQuality.WoWToken ) or LE_ITEM_QUALITY_WOWTOKEN or 8,
+		},
+		TYPE = {
 			UNKNOWN = {
 				PARENT = -2,
 			},
@@ -683,89 +642,156 @@ ArkInventory.Const = { -- constants
 				WOWTOKEN = 0, -- [174]
 			},
 		},
-		EXPANSION = {
-			--CURRENT = set elsewhere,
-			DRAGONFLIGHT = LE_EXPANSION_DRAGONFLIGHT or 9,
-			SHADOWLANDS = LE_EXPANSION_SHADOWLANDS or 8,
-			BFA = LE_EXPANSION_BATTLE_FOR_AZEROTH or 7,
-			LEGION = LE_EXPANSION_LEGION or 6,
-			DRAENOR = LE_EXPANSION_WARLORDS_OF_DRAENOR or 5,
-			PANDARIA = LE_EXPANSION_MISTS_OF_PANDARIA or 4,
-			CATACLYSM = LE_EXPANSION_CATACLYSM or 3,
-			WRATH = LE_EXPANSION_WRATH_OF_THE_LICH_KING or 2,
-			TBC = LE_EXPANSION_BURNING_CRUSADE or 1,
-			CLASSIC = LE_EXPANSION_CLASSIC or 0,
+	},
+	LIST = {
+		SORTBY = {
+			NAME = 1,
+			NUMBER = 2,
+			ORDER = 3,
 		},
-		ITEMQUALITY = {
-			MISSING = -2,
-			UNKNOWN = -1,
-			POOR = ( Enum.ItemQuality and Enum.ItemQuality.Poor ) or LE_ITEM_QUALITY_POOR or 0,
-			STANDARD = ( Enum.ItemQuality and Enum.ItemQuality.Standard ) or LE_ITEM_QUALITY_COMMON or 1,
-			GOOD = ( Enum.ItemQuality and Enum.ItemQuality.Good )or LE_ITEM_QUALITY_UNCOMMON or 2,
-			RARE = ( Enum.ItemQuality and Enum.ItemQuality.Rare ) or LE_ITEM_QUALITY_RARE or 3,
-			EPIC = ( Enum.ItemQuality and Enum.ItemQuality.Epic ) or LE_ITEM_QUALITY_EPIC or 4,
-			LEGENDARY = ( Enum.ItemQuality and Enum.ItemQuality.Legendary ) or LE_ITEM_QUALITY_LEGENDARY or 5,
-			ARTIFACT = ( Enum.ItemQuality and Enum.ItemQuality.Artifact ) or LE_ITEM_QUALITY_ARTIFACT or 6,
-			HEIRLOOM = ( Enum.ItemQuality and Enum.ItemQuality.Heirloom ) or LE_ITEM_QUALITY_HEIRLOOM or 7,
-			WOWTOKEN = ( Enum.ItemQuality and Enum.ItemQuality.WoWToken ) or LE_ITEM_QUALITY_WOWTOKEN or 8,
+		SHOW = {
+			ACTIVE = 1,
+			DELETED = 2,
 		},
-		BATTLEPET = {
-			ENEMY = LE_BATTLE_PET_ENEMY or 2,
+	},
+	SORTWHEN = {
+		ALWAYS = 1,
+		ONOPEN = 2,
+		MANUAL = 3,
+	},
+}
+
+
+ArkInventory.Const = { -- constants
+	
+	Program = {
+		Name = "ArkInventory",
+		Version = nil, -- calculated at load
+	},
+	
+	BLIZZARD = {
+		
+--		/dump ArkInventory.Const.BLIZZARD.TOC
+		TOC = select( 4, GetBuildInfo( ) ) or 0,
+		
+		CLIENT = {
+			ID = nil,
+			NAME = "",
+			EXPANSION = { },
+			PTR = 0.1,
+			BETA = 0.2,
 		},
-		SORTWHEN = {
-			ALWAYS = 1,
-			ONOPEN = 2,
-			MANUAL = 3,
-		},
-		ANCHOR = {
-			DEFAULT = 0,
-			BOTTOMRIGHT = 1,
-			BOTTOMLEFT = 2,
-			TOPLEFT = 3,
-			TOPRIGHT = 4,
-			TOP = 5,
-			BOTTOM = 6,
-			LEFT = 7,
-			RIGHT = 8,
-			CENTER = 9,
-		},
-		DIRECTION = {
-			HORIZONTAL = 1,
-			VERTICAL = 2,
-		},
-		BAGAUTOACTION = {
-			NO = 0,
-			YES = 1,
-			ALWAYS = 2,
-		},
-		CATEGORY = {
-			ACTION = {
-				WHEN = {
-					DISABLED = 0,
-					MANUAL = 1,
-					AUTO = 2,
-					MAX = 2,
-				},
-				TYPE = {
-					DISABLED = 0,
-					VENDOR = 1,
-					MAIL = 2,
-					BANK = 3,
-					MAX = 3,
+		
+		GLOBAL = {
+			TOOLTIP = {
+				UPDATETIMER = 1, --TOOLTIP_UPDATE_TIME = 0.2
+			},
+			FONT = {
+				COLOR = {
+					UNUSABLE = {
+						["fefe1f1f"] = true, -- shadowlands
+						["ffff2020"] = true, -- dragonflight
+					},
 				},
 			},
-			LIST = {
-				SORT = {
-					NAME = 1,
-					NUMBER = 2,
-					ORDER = 3,
+			PROFESSIONRANK = {
+				COLOR = {
+					[0] = { r = 255 / 255, g = 255 / 255, b = 255 / 255 },
+					[1] = { r = 169 / 255, g = 113 / 255, b =  66 / 255 },
+					[2] = { r = 192 / 255, g = 192 / 255, b = 192 / 255 },
+					[3] = { r = 215 / 255, g = 190 / 255, b = 105 / 255 },
+					[4] = { r =  80 / 255, g = 200 / 255, b = 120 / 255 },
+					[5] = { r = 222 / 255, g = 129 / 255, b =  35 / 255 },
 				},
-				SHOW = {
-					ACTIVE = 1,
-					DELETED = 2,
+				OFFSET = {
+					[1] = { x = -5, y = -5 },
+					[2] = { x = -1, y = -5 },
+					[3] = { x = -1, y = -3 },
+					[4] = { x = -1, y = -1 },
+					[5] = { x = -1, y = -1 },
+				}
+			},
+			CONTAINER = {
+				SLOTSIZE = 37,
+				NUM_SLOT_MAX = MAX_CONTAINER_ITEMS or 36,
+				FILTER = {
+					IGNORECLEANUP = LE_BAG_FILTER_FLAG_IGNORE_CLEANUP or ( Enum.BagSlotFlags and Enum.BagSlotFlags.DisableAutoSort ) or 1,
+					ASSIGN_TO_BAG = BAG_FILTER_ASSIGN_TO,
+					LABELS = BAG_FILTER_LABELS,
 				},
+				NUM_BAGS_NORMAL = NUM_BAG_SLOTS or NUM_BAG_FRAMES or 4,
+				NUM_BAGS_REAGENT = NUM_REAGENTBAG_FRAMES or 0,
+				NUM_BAGS = 0, -- calculated further down
+			},
+			BANK = {
+				NUM_BAGS = NUM_BANKBAGSLOTS or 7,
+				NUM_SLOTS = NUM_BANKGENERIC_SLOTS or 7 * 4,
+			},
+			REAGENTBANK = {
+				NUM_SLOTS = 7 * 7 * 2,
+			},
+			GUILDBANK = {
+				NUM_TABS = MAX_GUILDBANK_TABS,
+				WIDTH = NUM_GUILDBANK_COLUMNS or 14,
+				HEIGHT = NUM_SLOTS_PER_GUILDBANK_GROUP or 7,
+				SLOTS_PER_TAB = MAX_GUILDBANK_SLOTS_PER_TAB or 14 * 7,
+				LOG_TIME_PREPEND = GUILD_BANK_LOG_TIME_PREPEND or "|cff009999  ",
+			},
+			VOIDSTORAGE = {
+				NUM_SLOT_MAX = VOID_STORAGE_MAX or 80,
+				NUM_PAGES = VOID_STORAGE_PAGES or 2,
+			},
+			PET = {
+				FILTER = {
+					COLLECTED = LE_PET_JOURNAL_FILTER_COLLECTED or 1,
+					NOTCOLLECTED = LE_PET_JOURNAL_FILTER_NOT_COLLECTED or 2,
+				},
+				CAGE_ITEMID = 82800,
+			},
+			MAILBOX = {
+				NUM_ATTACHMENT_MAX = ATTACHMENTS_MAX_RECEIVE,
+			},
+			FRAME = {
+				SHOW = 1,
+				HIDE = 2,
 			},
 		},
+		
+		FUNCTION = {
+			GETITEMINFO = {
+				NAME = 1,
+				LINK = 2,
+				QUALITY = 3,
+				ILVL_BASE = 4,
+				USELEVEL = 5,
+				TYPE = 6,
+				SUBTYPE = 7,
+				STACKSIZE = 8,
+				EQUIP = 9,
+				TEXTURE = 10,
+				VENDORPRICE = 11,
+				TYPEID = 12,
+				SUBTYPEID = 13,
+				BINDING = 14,
+				EXPANSION = 15,
+				SETID = 16,
+				CRAFT = 17,
+			},
+			GETITEMINFOINSTANT = {
+				ID = 1,
+				TYPE = 2,
+				SUBTYPE = 3,
+				EQUIP = 4,
+				TEXTURE = 5,
+				TYPEID = 6,
+				SUBTYPEID = 7,
+			},
+			GETSPELLINFO = {
+				NAME = 1,
+				TEXTURE = 3,
+			}
+		},
+		
 	},
 	
 	Frame = {
@@ -847,6 +873,7 @@ ArkInventory.Const = { -- constants
 		Heirloom = 15,
 		Reputation = 16,
 		MountEquipment = 17,
+		TradeskillEquipment = 18,
 	},
 	
 	Offset = {
@@ -864,6 +891,7 @@ ArkInventory.Const = { -- constants
 		Heirloom = 1300,
 		Reputation = 1600,
 		MountEquipment = 6100,
+		TradeskillEquipment = 1420,
 	},
 	
 	Bag = {
@@ -925,7 +953,6 @@ ArkInventory.Const = { -- constants
 		},
 		
 		CharacterPaneOrder = {
-			["INVTYPE_NON_EQUIP"] = 0,
 			["INVTYPE_HEAD"] = 1,
 			["INVTYPE_NECK"] = 2,
 			["INVTYPE_SHOULDER"] = 3,
@@ -957,6 +984,8 @@ ArkInventory.Const = { -- constants
 			["INVTYPE_RELIC"] = 20,
 			["INVTYPE_AMMO"] = 20,
 			
+			-- stuff that needs to exist, but not get shown
+			["INVTYPE_NON_EQUIP"] = 0,
 			["INVTYPE_BAG"] = 0,
 			["INVTYPE_QUIVER"] = 0,
 			["INVTYPE_PROFESSION_TOOL"] = 0,
@@ -964,6 +993,8 @@ ArkInventory.Const = { -- constants
 		},
 		
 	},
+	
+	InventorySlotName = { "HeadSlot", "NeckSlot", "ShoulderSlot", "BackSlot", "ChestSlot", "ShirtSlot", "TabardSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "Finger0Slot", "Finger1Slot", "Trinket0Slot", "Trinket1Slot", "MainHandSlot", "SecondaryHandSlot" },
 	
 	Window = {
 		
@@ -976,10 +1007,10 @@ ArkInventory.Const = { -- constants
 		Draw = {
 			Init = 0, -- intital state, only exists at load, never set to init
 			Restart = 1, -- rebuild the entire window from scratch
-			Recalculate = 2, -- calculate
-			Resort = 3, -- sort
-			Refresh = 4, -- item changes
-			None = 5, -- nothing
+			Recalculate = 2, -- recalculate the window
+			Resort = 3, -- sort the items in the bars
+			Refresh = 4, -- in-place item updates
+			None = 5, -- do nothing
 		},
 		
 		Title = {
@@ -1116,6 +1147,17 @@ ArkInventory.Const = { -- constants
 		Checked = [[Interface\RAIDFRAME\ReadyCheck-Ready]],
 		atWar = [[Interface\RAIDFRAME\ReadyCheck-Ready]],
 		
+		Action = {
+			[ArkInventory.ENUM.ACTION.TYPE.VENDOR] = {
+				[ArkInventory.ENUM.ACTION.WHEN.AUTO] = [[Interface\Icons\INV_Misc_Coin_02]],
+				[ArkInventory.ENUM.ACTION.WHEN.MANUAL] = [[Interface\Icons\INV_Misc_Coin_04]],
+			},
+			[ArkInventory.ENUM.ACTION.TYPE.MAIL] = {
+				[ArkInventory.ENUM.ACTION.WHEN.AUTO] = [[Interface\Icons\INV_Letter_03]],
+				[ArkInventory.ENUM.ACTION.WHEN.MANUAL] = [[Interface\Icons\INV_Letter_13]],
+			},
+		},
+		
 	},
 	
 	SortKeys = { -- true = keep, false = remove
@@ -1124,6 +1166,7 @@ ArkInventory.Const = { -- constants
 		count = true,
 		itemcount = false,
 		category = true,
+		catname = true,
 		location = true,
 		itemuselevel = true,
 		itemstatlevel = true,
@@ -1147,31 +1190,29 @@ ArkInventory.Const = { -- constants
 		["u"] = 0x08, -- underwater
 		["x"] = 0x00, -- ignored / unknown
 	},
+	MountTypeID = {
+		[242] = "a", -- flying, swift spectral
+		[247] = "a", -- flying, cloud
+		[248] = "a", -- flying
+		[402] = "a", -- dragonriding
+		
+		[230] = "l", -- land
+		[241] = "l", -- qiraji battletank
+		[269] = "l", -- water surface
+		[284] = "l", -- land, chauffeured
+		[398] = "l", -- land, pterrordax (kuo'fon)
+		[407] = "l", -- otter
+		[408] = "l", -- snail
+		[412] = "l", -- otter
+		
+		[231] = "u", -- underwater (sort of), turtle
+		[232] = "u", -- underwater, vash'jir seahorse
+		[254] = "u", -- underwater
+	},
 	
 	booleantable = { true, false },
 	
 	Realm = { }, -- connected realm array
-	
-	ActionID = {
-		MainMenu = 0,
-		Close = 1,
-		EditMode = 2,
-		Rules = 3,
-		Search = 4,
-		SwitchCharacter = 5,
-		SwitchLocation = 6,
-		Restack = 7,
-		Changer = 8,
-		Refresh = 9,
-	},
-	
-	Bind = { -- ITEM_BINDx
-		Never = 0,
-		Use = 1,
-		Equip = 2,
-		Pickup = 3,
-		Account = 4,
-	},
 	
 	Reputation = {
 		Custom = {
@@ -1316,35 +1357,25 @@ ArkInventory.Const = { -- constants
 	
 	ObjectDataMaxAttempts = 10,
 	
+	ClassArmor = {
+		[ArkInventory.ENUM.ITEM.TYPE.ARMOR.CLOTH] = { MAGE = 1, PRIEST = 1, WARLOCK = 1 },
+		[ArkInventory.ENUM.ITEM.TYPE.ARMOR.LEATHER] = { DRUID = 1, ROGUE = 1, LOWLEVELHUNTER = 1, MONK = 1, DEMONHUNTER = 1 },
+		[ArkInventory.ENUM.ITEM.TYPE.ARMOR.MAIL] = { HUNTER = 1, SHAMAN = 1, EVOKER = 1 },
+		[ArkInventory.ENUM.ITEM.TYPE.ARMOR.PLATE] = { PALADIN = 1, WARRIOR = 1, DEATHKNIGHT = 1 },
+	},
+	
 }
+
 
 ArkInventory.Collection = { }
 ArkInventory.Action = { }
 
-ArkInventory.Const.Texture.Action = {
-	[ArkInventory.Const.ENUM.CATEGORY.ACTION.TYPE.VENDOR] = {
-		[ArkInventory.Const.ENUM.CATEGORY.ACTION.WHEN.AUTO] = [[Interface\Icons\INV_Misc_Coin_02]],
-		[ArkInventory.Const.ENUM.CATEGORY.ACTION.WHEN.MANUAL] = [[Interface\Icons\INV_Misc_Coin_04]],
-	},
-	[ArkInventory.Const.ENUM.CATEGORY.ACTION.TYPE.MAIL] = {
-		[ArkInventory.Const.ENUM.CATEGORY.ACTION.WHEN.AUTO] = [[Interface\Icons\INV_Letter_03]],
-		[ArkInventory.Const.ENUM.CATEGORY.ACTION.WHEN.MANUAL] = [[Interface\Icons\INV_Letter_13]],
-	},
-}
-
-
-ArkInventory.Const.ClassArmor = {
-	[ArkInventory.Const.ENUM.ITEMCLASS.ARMOR.CLOTH] = { MAGE = 1, PRIEST = 1, WARLOCK = 1 },
-	[ArkInventory.Const.ENUM.ITEMCLASS.ARMOR.LEATHER] = { DRUID = 1, ROGUE = 1, LOWLEVELHUNTER = 1, MONK = 1, DEMONHUNTER = 1 },
-	[ArkInventory.Const.ENUM.ITEMCLASS.ARMOR.MAIL] = { HUNTER = 1, SHAMAN = 1, EVOKER = 1 },
-	[ArkInventory.Const.ENUM.ITEMCLASS.ARMOR.PLATE] = { PALADIN = 1, WARRIOR = 1, DEATHKNIGHT = 1 },
-}
 
 ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS = ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS_NORMAL + ArkInventory.Const.BLIZZARD.GLOBAL.CONTAINER.NUM_BAGS_REAGENT
 
 
 -- populate the min/max toc values, and ids for each expansion
-for k, v in pairs( ArkInventory.Const.ENUM.EXPANSION ) do
+for k, v in pairs( ArkInventory.ENUM.EXPANSION ) do
 	if k ~= "CURRENT" then
 		ArkInventory.Const.BLIZZARD.CLIENT.EXPANSION[v] = {
 			ID = v,

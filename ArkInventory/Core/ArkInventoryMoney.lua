@@ -194,7 +194,7 @@ ArkInventory.Const.MoneyTypeInfo["GUILDBANK"] = {
 	
 	OnloadFunc = function( moneyFrame )
 		
-		if not ArkInventory.ClientCheck( ArkInventory.Const.ENUM.EXPANSION.WRATH ) then return end -- FIX ME
+		if not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WRATH ) then return end -- FIX ME
 		
 		assert( moneyFrame, "code error: moneyFrame argument is missing" )
 		
@@ -225,7 +225,7 @@ ArkInventory.Const.MoneyTypeInfo["GUILDBANK_WITHDRAW"] = {
 	
 	OnloadFunc = function( moneyFrame )
 		
-		if not ArkInventory.ClientCheck( ArkInventory.Const.ENUM.EXPANSION.WRATH ) then return end -- FIX ME
+		if not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WRATH ) then return end -- FIX ME
 		
 		assert( moneyFrame, "code error: moneyFrame argument is missing" )
 		
@@ -260,7 +260,7 @@ ArkInventory.Const.MoneyTypeInfo["GUILDBANK_REPAIR"] = {
 	
 	OnloadFunc = function( moneyFrame )
 		
-		if not ArkInventory.ClientCheck( ArkInventory.Const.ENUM.EXPANSION.WRATH ) then return end -- FIX ME
+		if not ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.WRATH ) then return end -- FIX ME
 		
 		assert( moneyFrame, "code error: moneyFrame argument is missing" )
 		

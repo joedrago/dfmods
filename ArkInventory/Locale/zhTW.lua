@@ -188,8 +188,7 @@ if not L then return end
 --	L["MENU_BAR"] = ""
 	L["MENU_BAR_TITLE"] = "分組 %1$s 選項"
 	L["MENU_BAR_CATEGORY_DESC"] = "指定 %1$s 到此分組"
-	L["MENU_BAR_CATEGORY_CURRENT"] = "目前使用"
-	L["MENU_BAR_CATEGORY_ASSIGN"] = "可使用類別"
+--	L["MENU_BAR_CATEGORY_LABEL"] = ""
 	L["MENU_BAR_CATEGORY_REMOVE_DESC"] = "自分組 %2$s 中移除 %1$s，並將它放回預設分組" -- 1 is the category name, 2 is the bar number
 	L["MENU_BAR_CATEGORY_HIDDEN_DESC"] = "設定此分組是否為隱藏模式\n\n在隱藏分組內的物品，一般情況下將不會顯示"
 --	L["MENU_BAR_CATEGORY_MOVE_START_DESC"] = ""
@@ -404,7 +403,6 @@ if not L then return end
 	L["CONFIG_CONTROL_MONITOR_DESC"] = "切換是否監視 的 %1$s 資料"
 	L["CONFIG_CONTROL_SAVE_DESC"] = "切換是否儲存 的 %1$s 資料，如此一來你可以在使用其他角色時瀏覽 (或是離線)。"
 --	L["CONFIG_CONTROL_NOTIFY_ERASE_DESC"] = ""
-	L["CONFIG_CONTROL_OVERRIDE"] = "取代系統框架"
 	L["CONFIG_CONTROL_OVERRIDE_DESC"] = "切換是否隱藏原本的暴風雪 %2$s 框架，如此一來可用 %1$s 取代。\n\n取消此選項將會使用標準暴風雪 %2$s 功能。\n\n當此選項取消，你仍舊可以設定熱鍵開啟 %1$s %2$s。"
 --	L["CONFIG_CONTROL_SPECIAL_DESC"] = ""
 	L["CONFIG_CONTROL_ANCHOR_LOCK_DESC"] = "鎖定 %1$s 框架以避免移動"
@@ -531,6 +529,7 @@ if not L then return end
 --	L["CONFIG_DESIGN_ITEM_COOLDOWN_NUMBER_DESC"] = ""
 --	L["CONFIG_DESIGN_ITEM_COOLDOWN_COMBAT"] = ""
 --	L["CONFIG_DESIGN_ITEM_COOLDOWN_COMBAT_DESC"] = ""
+--	L["CONFIG_DESIGN_ITEM_COOLDOWN_ONOPEN_DESC"] = ""
 	
 	L["CONFIG_DESIGN_ITEM_BORDER_SHOW_DESC"] = "設定是否顯示物品邊框"
 	L["CONFIG_DESIGN_ITEM_BORDER_STYLE_DESC"] = "設定物品的邊框樣式"
@@ -572,16 +571,17 @@ if not L then return end
 --	L["CONFIG_ACTION_TYPE"] = ""
 --	L["CONFIG_ACTION_TYPE_DESC"] = ""
 --	L["CONFIG_ACTION_WHEN_DESC"] = ""
+--	L["CONFIG_ACTION_ENABLE_DESC"] = ""
 	
 --	L["CONFIG_ACTION_MANUAL_RUN"] = ""
+--	L["CONFIG_ACTION_TESTMODE"] = ""
 	
 --	L["CONFIG_ACTION_VENDOR_SELL"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_AUTO"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_AUTO_DESC"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_LIMIT"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_LIMIT_DESC"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_LIMIT_ABORT"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_TEST"] = ""
+--	L["CONFIG_ACTION_VENDOR_AUTOMATIC_DESC"] = ""
+--	L["CONFIG_ACTION_VENDOR_MANUAL_DESC"] = ""
+--	L["CONFIG_ACTION_VENDOR_LIMIT"] = ""
+--	L["CONFIG_ACTION_VENDOR_LIMIT_DESC"] = ""
+--	L["CONFIG_ACTION_VENDOR_LIMIT_ABORT"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOLD"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOLD_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_QUALITY_CUTOFF_DESC"] = ""
@@ -599,13 +599,19 @@ if not L then return end
 --	L["CONFIG_ACTION_VENDOR_TESTMODE"] = ""
 --	L["CONFIG_ACTION_VENDOR_TESTMODE_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_PROCESSING_DISABLED_DESC"] = ""
+	
 --	L["CONFIG_ACTION_VENDOR_SOULBOUND_ALREADY_KNOWN_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOULBOUND_EQUIPMENT_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOULBOUND_ITEMLEVEL_DESC"] = ""
 	
 --	L["CONFIG_ACTION_MAIL_SEND"] = ""
---	L["CONFIG_ACTION_MAIL_SEND_AUTO"] = ""
---	L["CONFIG_ACTION_MAIL_SEND_AUTO_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_AUTOMATIC_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_MANUAL_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_TESTMODE"] = ""
+--	L["CONFIG_ACTION_MAIL_TESTMODE_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_QUALITY_CUTOFF_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_LIST_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_TIMER_DESC"] = ""
 	
 	
 -- sorting
@@ -637,6 +643,8 @@ if not L then return end
 	L["CONFIG_SORTING_INCLUDE_ITEMTYPE_DESC"] = "設定排序時是否考慮物品類型及次類型"
 	L["CONFIG_SORTING_INCLUDE_CATEGORY"] = "物品類別"
 	L["CONFIG_SORTING_INCLUDE_CATEGORY_DESC"] = "設定排序時是否考慮物品的類別"
+--	L["CONFIG_SORTING_INCLUDE_CATNAME"] = ""
+--	L["CONFIG_SORTING_INCLUDE_CATNAME_DESC"] = ""
 	L["CONFIG_SORTING_INCLUDE_ITEMUSELEVEL"] = "物品使用等級"
 	L["CONFIG_SORTING_INCLUDE_ITEMUSELEVEL_DESC"] = "設定排序時是否考慮物品之使用等級"
 	L["CONFIG_SORTING_INCLUDE_ITEMSTATLEVEL"] = "物品等級 (stat)"
@@ -683,9 +691,8 @@ if not L then return end
 	
 	L["CONFIG_RULE_SHOWDISABLED"] = "顯示停用規則"
 	L["CONFIG_RULE_SHOWDISABLED_DESC"] = "顯示已經停用的規則"
---	L["CONFIG_RULE_WIDTH_DESC"] = ""
---	L["CONFIG_RULE_ROWS"] = ""
---	L["CONFIG_RULE_ROWS_DESC"] = ""
+--	L["CONFIG_LIST_WIDTH_DESC"] = ""
+--	L["CONFIG_LIST_ROWS_DESC"] = ""
 	
 --	L["CONFIG_CATEGORY_CUSTOM"] = ""
 	L["CONFIG_CATEGORY_CUSTOM_PLURAL"] = "自訂類別"
@@ -823,6 +830,7 @@ if not L then return end
 	L["ANCHOR"] = "錨點"
 	L["ANCHOR_TEXT1"] = "設定錨點"
 	L["ANCHOR_TEXT2"] = "固定 %1$s 在 %2$s"
+--	L["ANCHOR_TEXT3"] = ""
 	L["BORDER_DESC"] = "邊框選項"
 	L["FILE"] = "檔案"
 	L["HEIGHT"] = "高度"
@@ -840,6 +848,7 @@ if not L then return end
 	L["ASCENDING"] = "遞增"
 	L["DESCENDING"] = "遞減"
 	L["LOCATION"] = "地區"
+--	L["LOCATIONS"] = ""
 	L["DHMS"] = "天時分秒"
 	L["RANDOM"] = "隨機"
 	L["RELOAD"] = "重載"
@@ -903,6 +912,13 @@ if not L then return end
 --	L["AZERITE"] = ""
 --	L["COSMETIC"] = ""
 --	L["WHEN"] = ""
+--	L["RECIPIENT"] = ""
+--	L["ACTIONS"] = ""
+--	L["ROWS"] = ""
+--	L["DESTINATION"] = ""
+--	L["ASSIGNED"] = ""
+--	L["ASSIGNABLE"] = ""
+--	L["OVERRIDE"] = ""
 	
 	
 -- libdatabroker
@@ -961,3 +977,4 @@ if not L then return end
 --	L["LDB_REPUTATION_NONE"] = ""
 	
 --	L["LDB_CURRENCY_NONE"] = ""
+

@@ -1,4 +1,71 @@
-﻿# 3.10.04 (04-NOV-2022)
+﻿# 3.10.09 (24-NOV-2022)
+ - fixed - issue with rule functions wearble/unwearble and cloaks
+ - restored - config > actions (was accidentally hidden)
+ - fixed - issue with config transmog secondary option hiding the wrong sub options
+ - restored - xml for ArkScanTooltipTemplate, OnTooltipAddMoney and OnTooltipCleared re-added both as several hundred individual MoneyFrames were being added to the scan tooltip just on entering the world.  this was the probable cause for the lag and ui crashes.
+ - removed - PLAYER_AVG_ITEM_LEVEL_UPDATE event
+ - removed - rescans should no longger trigger a full window refresh (they already update the items)
+ - added - preloading item info from the bag and bank to make their initial opens are faster.  will not happen if you enter while in combat.  opening the window before this has completed will abort the preload.
+ - added - preloading the bag and bank windows so their initial opens are faster.  will not happen if you enter while in combat.  opening the window before this has completed will abort the preload.
+ - changed - the rules module no longer triggers full window rebuilds on enable (mucks up the preload)
+ - removed - PLAYER_INTERACTION_MANAGER_FRAME_SHOW and PLAYER_INTERACTION_MANAGER_FRAME_HIDE events
+ - removed - event UNIT_INVENTORY_CHANGED
+ - changed - added yielding to every scan to alleviate any potential sources of lag
+ - changed - added extra yielding to the window draw functions
+ - changed - enforced a 25ms yield timer
+ - fixed - edit mode item menu for empty slots should now show the type of slot, not "retrieving item data"
+ - added - icons on the bag, combined bag, bank, and guild bank, frames to swap to ArkInventory control
+ - added - location sub menu to switch window back to blizzard control.
+ - fixed - issue with the conduit overlay when it had no quality set
+ 
+# 3.10.08 (24-NOV-2022)
+ - no longer available
+ 
+# 3.10.07 (19-NOV-2022)
+ - fixed - issue with pressing ESCAPE to close windows (like the map) and getting blocked when in combat
+ - added - category name as a new sort method key.  only applies to custom categories and rules.  system categories will sort by id as they have no name.
+ - added - mail action options - config > general > actions > mail
+ - fixed - keybindings are back in their own section and should not cause any taint.
+ - fixed - empty reagent bank slots should be in the correct category again
+ - fixed - should no longer generate a second frame open causing issues for other mods (like tsm) at the auction house
+ - updated - config > settings > designs > items > cooldown > on window open.  cooldowns will no longer automatically show.  you will need to enable this option and then they will update when you close/open the window.  triggering off the cooldown events generated too much lag especially in large crowds
+ - fixed - issue with mailbox scanning
+ - fixed - battlepet tooltips showing during scanning
+ - fixed - battlepets in the vault
+ - fixed - opening the config before the mount data was ready
+ - fixed - config not opening from 3.10.06
+
+# 3.10.06 (19-NOV-2022)
+ - no longer available
+ 
+# 3.10.05 (16-NOV-2022)
+ - changed - (retail) toc updated to 100002
+ - fixed - issue with bucket events that get renamed
+ - fixed - map ids for some old zone mounts
+ - added - zone restrictions for mounts so they dont get called when in the wrong zone
+ - updated - pets and mounts to 10.0.0
+ - fixed - item cooldown numbers should display properly (if you have it enabled at the blizzard level)
+ - added - config option to show numbers on the cooldown (it just lets you toggle the blizzard global cvar which is stored by the game, not by this mod)
+ - added - (workaround) a cooldown object has been directly included in the item template as it appears to not get added to the first few item objects that are created from it.
+ - changed - categoryset internal data structure
+ - added - one action can be assigned to each category/rule in a categoryset.  actions can be set to disabled, automatic, or manual
+ - changed - auto sell (junk) renamed to vendor and made an action
+ - changed - the junk sell keybinding has been renamed to manual action, and it runs all of the manual actions depending on where you are at the time.
+ - added - mail send added as a category action. you can select from any character you already have in arkinventory, or you can manually enter anything else. there are currently no options and a lot of debug output for it at the moment just to make sure its doing what its meant to
+ - changed - when at a vendor right clicking on a "no sell price" item that has a junk icon will now delete it.  the config > general > junk > delete option must be enabled for this to work.
+ - fixed - issue with external junk addons
+ - updated - profile import and export to handle the new categoryset structure.  old exports will not work for the moment
+ - changed - action data is removed from both profile exports and imports to ensure that people dont end up vendoring or mailing things off to players without them knowing
+ - fixed - BAG_UPDATE_COOLDOWN no longer provides a bag id, and no other events (that arent as prolific) are available to trigger cooldowns, so it may cause a refresh (not redraw) every second
+ - fixed - the one off (per enable) warning message if your profile is using a blueprint that no longer exists should now only trigger on valid locations for your game client
+ - updated - blueprint options in the config will now show if the currently selected option has been deleted instead of showing the default, so that you can see it and change it more easily
+ - fixed - issues with uploads to wago
+ - fixed - quest border and bang should now display (if enabled) for items that start a quest
+ - removed - workaround for taint from interactionframe.  was actually taint from the keybindings
+ - fixed - (mostly) various caged battlepet (and tooltip) issues in the vault, inbox, inventory (bank bag 0).  battlepets in the vault will show a pet cage for the time being until i can work out a way to get at that data.
+ - note - the stack size for a lot of older items has increased to 1000, please restack/cleanup to gain more free slots
+
+# 3.10.04 (04-NOV-2022)
  - added - rule function `wearable( )`
  - added - rule function `unwearable( )`
  - fixed - tooltip text in edit mode for re-assignment to the default category
@@ -9,7 +76,7 @@
  - fixed - ArkInventory.API.BlizzardBagIdToInternalId
  - fixed - (wrath/classic) the first bank bag was being treated like a reagent bag
  - fixed - some of the restack ignore bag options were being ignored due to a code issue
- - updated - xml for ArkScanTooltipTemplate, OnTooltipAddMoney (deprecated in beta) and OnTooltipCleared removed and are now cleared in OnLoad if they exist.  this should fix the lag issues.
+ - fixed - xml for ArkScanTooltipTemplate, OnTooltipAddMoney (deprecated in beta) and OnTooltipCleared removed and are now cleared in OnLoad if they exist.  this should fix the lag issues.
  - fixed - https://github.com/arkayenro/arkinventory/issues/1634 (dragonflight) usable rule function and tinting.  tooltips are using a new red color
  
 # 3.10.02 (27-OCT-2022)
@@ -61,7 +128,6 @@
  - fixed - (dragonflight) the default ui guild bank frame should no longer open when you open the guild bank
  - changed - money frame click has gone back to the single generic money popup, not the individual gold/silver/copper ones
  - fixed - issue with tradeskill scanning (nil key values)
- - changed - (retail) toc updated to 100002
  - fixed - https://github.com/arkayenro/arkinventory/issues/1604 - client detection issue that caused some categories to not show
  - changed - https://github.com/arkayenro/arkinventory/issues/1605 - outfit( ) rule function will now check using all supported outfit mods as well as the equipment manager, and not just the first one that is enabled.
  - changed - various cross client functions for dragonflight

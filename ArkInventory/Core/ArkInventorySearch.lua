@@ -87,20 +87,18 @@ function ArkInventory.Search.GetContent( h )
 			q = _G[string.format( "ITEM_QUALITY%d_DESC", q )] or q
 		end
 		
-		local tooltip = ArkInventory.Global.Tooltip.Scan
-		local txt1, txt2
-		
 		if info.class == "item" or info.class == "keystone" then
 			
 			local s
-			ArkInventory.TooltipSetHyperlink( tooltip, search_id )
+			ArkInventory.TooltipSet( ArkInventory.Global.Tooltip.Scan, nil, nil, nil, search_id )
 			
-			txt1, txt2 = ArkInventory.TooltipGetLine( tooltip, 1 )
+			local leftText, rightText, leftTextClean, rightTextClean, leftColor, rightColor = ArkInventory.TooltipGetLine( ArkInventory.Global.Tooltip.Scan, 1 )
 			-- check for no response??
 			
-			for i = 2, ArkInventory.TooltipGetNumLines( tooltip ) do
-				txt1, txt2 = ArkInventory.TooltipGetLine( tooltip, i, true )
-				txt = string.format( "%s #%s# #%s#", txt, txt1, txt2 )
+			local leftText, rightText, leftTextClean, rightTextClean, leftColor, rightColor
+			for i = 2, ArkInventory.TooltipGetNumLines( ArkInventory.Global.Tooltip.Scan ) do
+				leftText, rightText, leftTextClean, rightTextClean, leftColor, rightColor = ArkInventory.TooltipGetLine( ArkInventory.Global.Tooltip.Scan, i )
+				txt = string.format( "%s #%s# #%s#", txt, leftTextClean, rightTextClean )
 			end
 			
 			for z in pairs( ITEM_QUALITY_COLORS ) do
@@ -108,7 +106,7 @@ function ArkInventory.Search.GetContent( h )
 				txt = string.gsub( txt, s, "" )
 			end
 			
-			for _, z in pairs( ArkInventory.Const.Bindings.All ) do
+			for _, z in pairs( ArkInventory.Const.BindingText.All ) do
 				s = string.format( "#%s#", z )
 				txt = string.gsub( txt, s, "" )
 			end
@@ -131,8 +129,7 @@ function ArkInventory.Search.GetContent( h )
 			
 		elseif info.class == "currency" then
 			
-			--local object = ArkInventory.Collection.Currency.GetByID( info.osd[2] )
-			--tooltip:SetCurrencyTokenByID( info.osd[2] )
+			--ArkInventory.TooltipSet( ArkInventory.Global.Tooltip.Scan, nil, nil, nil, search_id )
 			
 			--txt1 = ArkInventory.TooltipGetLine( tooltip, 2 )
 			--txt = string.format( "#%s#", info.description or "" )

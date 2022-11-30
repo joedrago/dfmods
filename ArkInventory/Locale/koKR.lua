@@ -188,8 +188,7 @@ if not L then return end
 --	L["MENU_BAR"] = ""
 	L["MENU_BAR_TITLE"] = "%1$s번 바 설정"
 	L["MENU_BAR_CATEGORY_DESC"] = "해당 바에 %1$s 분류를 지정합니다."
-	L["MENU_BAR_CATEGORY_CURRENT"] = "현재 지정"
-	L["MENU_BAR_CATEGORY_ASSIGN"] = "지정 가능한 분류"
+--	L["MENU_BAR_CATEGORY_LABEL"] = ""
 	L["MENU_BAR_CATEGORY_REMOVE_DESC"] = "%2$s번 바에서 %1$s 분류를 제거하고 기본 바로 되돌리려면 클릭하세요." -- 1 is the category name, 2 is the bar number
 	L["MENU_BAR_CATEGORY_HIDDEN_DESC"] = "해당 분류의 숨겨진 상태를 전환하려면 클릭하세요.\n\n숨겨진 분류의 아이템은 정상 모드에서 표시되지 않습니다."
 --	L["MENU_BAR_CATEGORY_MOVE_START_DESC"] = ""
@@ -404,7 +403,6 @@ if not L then return end
 --	L["CONFIG_CONTROL_MONITOR_DESC"] = ""
 --	L["CONFIG_CONTROL_SAVE_DESC"] = ""
 --	L["CONFIG_CONTROL_NOTIFY_ERASE_DESC"] = ""
-	L["CONFIG_CONTROL_OVERRIDE"] = "블리자드 프레임 숨김"
 --	L["CONFIG_CONTROL_OVERRIDE_DESC"] = ""
 --	L["CONFIG_CONTROL_SPECIAL_DESC"] = ""
 --	L["CONFIG_CONTROL_ANCHOR_LOCK_DESC"] = ""
@@ -531,6 +529,7 @@ if not L then return end
 --	L["CONFIG_DESIGN_ITEM_COOLDOWN_NUMBER_DESC"] = ""
 --	L["CONFIG_DESIGN_ITEM_COOLDOWN_COMBAT"] = ""
 --	L["CONFIG_DESIGN_ITEM_COOLDOWN_COMBAT_DESC"] = ""
+--	L["CONFIG_DESIGN_ITEM_COOLDOWN_ONOPEN_DESC"] = ""
 	
 --	L["CONFIG_DESIGN_ITEM_BORDER_SHOW_DESC"] = ""
 --	L["CONFIG_DESIGN_ITEM_BORDER_STYLE_DESC"] = ""
@@ -572,16 +571,17 @@ if not L then return end
 --	L["CONFIG_ACTION_TYPE"] = ""
 --	L["CONFIG_ACTION_TYPE_DESC"] = ""
 --	L["CONFIG_ACTION_WHEN_DESC"] = ""
+--	L["CONFIG_ACTION_ENABLE_DESC"] = ""
 	
 --	L["CONFIG_ACTION_MANUAL_RUN"] = ""
+--	L["CONFIG_ACTION_TESTMODE"] = ""
 	
 --	L["CONFIG_ACTION_VENDOR_SELL"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_AUTO"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_AUTO_DESC"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_LIMIT"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_LIMIT_DESC"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_LIMIT_ABORT"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_TEST"] = ""
+--	L["CONFIG_ACTION_VENDOR_AUTOMATIC_DESC"] = ""
+--	L["CONFIG_ACTION_VENDOR_MANUAL_DESC"] = ""
+--	L["CONFIG_ACTION_VENDOR_LIMIT"] = ""
+--	L["CONFIG_ACTION_VENDOR_LIMIT_DESC"] = ""
+--	L["CONFIG_ACTION_VENDOR_LIMIT_ABORT"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOLD"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOLD_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_QUALITY_CUTOFF_DESC"] = ""
@@ -599,13 +599,19 @@ if not L then return end
 --	L["CONFIG_ACTION_VENDOR_TESTMODE"] = ""
 --	L["CONFIG_ACTION_VENDOR_TESTMODE_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_PROCESSING_DISABLED_DESC"] = ""
+	
 --	L["CONFIG_ACTION_VENDOR_SOULBOUND_ALREADY_KNOWN_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOULBOUND_EQUIPMENT_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOULBOUND_ITEMLEVEL_DESC"] = ""
 	
 --	L["CONFIG_ACTION_MAIL_SEND"] = ""
---	L["CONFIG_ACTION_MAIL_SEND_AUTO"] = ""
---	L["CONFIG_ACTION_MAIL_SEND_AUTO_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_AUTOMATIC_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_MANUAL_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_TESTMODE"] = ""
+--	L["CONFIG_ACTION_MAIL_TESTMODE_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_QUALITY_CUTOFF_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_LIST_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_TIMER_DESC"] = ""
 	
 	
 -- sorting
@@ -637,6 +643,8 @@ if not L then return end
 	L["CONFIG_SORTING_INCLUDE_ITEMTYPE_DESC"] = "인벤토리 정렬에 아이템의 종류와 세부 종류의 포함을 전환합니다."
 	L["CONFIG_SORTING_INCLUDE_CATEGORY"] = "아이템 분류"
 	L["CONFIG_SORTING_INCLUDE_CATEGORY_DESC"] = "인벤토리 정렬에 아이템 분류의 포함을 전환합니다."
+--	L["CONFIG_SORTING_INCLUDE_CATNAME"] = ""
+--	L["CONFIG_SORTING_INCLUDE_CATNAME_DESC"] = ""
 	L["CONFIG_SORTING_INCLUDE_ITEMUSELEVEL"] = "아이템 (사용) 레벨"
 	L["CONFIG_SORTING_INCLUDE_ITEMUSELEVEL_DESC"] = "인벤토리 정렬에 아이템의 (사용) 레벨의 포함을 전환합니다."
 --	L["CONFIG_SORTING_INCLUDE_ITEMSTATLEVEL"] = ""
@@ -683,9 +691,8 @@ if not L then return end
 	
 	L["CONFIG_RULE_SHOWDISABLED"] = "비활성화된 규칙 표시"
 	L["CONFIG_RULE_SHOWDISABLED_DESC"] = "비활성화된 규칙의 표시를 전환합니다."
---	L["CONFIG_RULE_WIDTH_DESC"] = ""
---	L["CONFIG_RULE_ROWS"] = ""
---	L["CONFIG_RULE_ROWS_DESC"] = ""
+--	L["CONFIG_LIST_WIDTH_DESC"] = ""
+--	L["CONFIG_LIST_ROWS_DESC"] = ""
 	
 --	L["CONFIG_CATEGORY_CUSTOM"] = ""
 --	L["CONFIG_CATEGORY_CUSTOM_PLURAL"] = ""
@@ -823,6 +830,7 @@ if not L then return end
 --	L["ANCHOR"] = ""
 --	L["ANCHOR_TEXT1"] = ""
 --	L["ANCHOR_TEXT2"] = ""
+--	L["ANCHOR_TEXT3"] = ""
 --	L["BORDER_DESC"] = ""
 --	L["FILE"] = ""
 --	L["HEIGHT"] = ""
@@ -840,6 +848,7 @@ if not L then return end
 --	L["ASCENDING"] = ""
 --	L["DESCENDING"] = ""
 --	L["LOCATION"] = ""
+--	L["LOCATIONS"] = ""
 --	L["DHMS"] = ""
 --	L["RANDOM"] = ""
 	L["RELOAD"] = "재시작"
@@ -903,6 +912,13 @@ if not L then return end
 --	L["AZERITE"] = ""
 --	L["COSMETIC"] = ""
 --	L["WHEN"] = ""
+--	L["RECIPIENT"] = ""
+--	L["ACTIONS"] = ""
+--	L["ROWS"] = ""
+--	L["DESTINATION"] = ""
+--	L["ASSIGNED"] = ""
+--	L["ASSIGNABLE"] = ""
+--	L["OVERRIDE"] = ""
 	
 	
 -- libdatabroker

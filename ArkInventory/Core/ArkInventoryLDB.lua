@@ -1072,8 +1072,13 @@ function ArkInventory.LDB.Mounts:OnClick( button, down )
 	
 	local loc_id = ArkInventory.Const.Location.Mount
 	
-	if not ArkInventory.isLocationMonitored( loc_id ) or not ArkInventory.Collection.Mount.IsReady( ) then
-		ArkInventory.OutputDebug( "location not monitored or ready" )
+	if not ArkInventory.isLocationMonitored( loc_id ) then
+		ArkInventory.OutputWarning( "location is not monitored" )
+		return
+	end
+	
+	if not ArkInventory.Collection.Mount.IsReady( ) then
+		ArkInventory.OutputWarning( "location is not ready" )
 		return
 	end
 	

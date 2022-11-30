@@ -742,7 +742,7 @@ function ArkInventory.Tradeskill.ScanHeaders( )
 		
 		ArkInventory.ObjectCacheTooltipClear( )
 		
-		if ArkInventory.ClientCheck( ArkInventory.Const.ENUM.EXPANSION.DRAGONFLIGHT ) then
+		if ArkInventory.ClientCheck( ArkInventory.ENUM.EXPANSION.DRAGONFLIGHT ) then
 			ArkInventory.LoadAddOn( "Blizzard_Professions" )
 			ArkInventory.Tradeskill.Const.Frame = ProfessionsFrame
 		else
@@ -838,7 +838,7 @@ function ArkInventory.Tradeskill.ScanHeaders( )
 		ArkInventory.Frame_Main_DrawStatus( nil, ArkInventory.Const.Window.Draw.Recalculate )
 	end
 	
-	if ArkInventory.ClientCheck( nil, ArkInventory.Const.ENUM.EXPANSION.SHADOWLANDS ) then
+	if ArkInventory.ClientCheck( nil, ArkInventory.ENUM.EXPANSION.SHADOWLANDS ) then
 		-- C_TradeSkillUI.OpenTradeSkill is now a protected function in dragonflight so cant be done any more
 		ArkInventory.OutputDebug( "TRADESKILL: QUEUE_START" )
 		ArkInventory:SendMessage( "EVENT_ARKINV_TRADESKILL_UPDATE_BUCKET", "QUEUE_START" )

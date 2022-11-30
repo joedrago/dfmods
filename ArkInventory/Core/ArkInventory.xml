@@ -11,14 +11,6 @@
         
         GameTooltip_OnLoad( self )
         self:SetOwner( UIParent, "ANCHOR_NONE" )
-        
-        if self:HasScript( "OnTooltipAddMoney" ) then
-          self:SetScript( "OnTooltipAddMoney", nil )
-        end
-        
-        if self:HasScript( "OnTooltipCleared" ) then
-          self:SetScript( "OnTooltipCleared", nil )
-        end
       </Onload>
     </Scripts>
   </GameTooltip>
@@ -510,7 +502,7 @@
       </OnMouseUp>
       
       <PreClick>
-        ArkInventory.Frame_Item_PreClick( self, button )
+        ArkInventory.Frame_Item_PreClick( self, button, down )
       </PreClick>
       
       <PostClick>
@@ -1280,33 +1272,23 @@
   
   
   <Button virtual="true" name="ARKINV_TemplateChangerVaultAction" inherits="ARKINV_TemplateButton" hidden="true">
-    
     <Size x="30" y="30" />
-    
     <NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up" />
-    
     <PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down" />
-    
     <Scripts>
-      
       <OnLoad>
         ArkInventory.Frame_Changer_Vault_Action_OnLoad( self )
       </OnLoad>
-      
       <OnClick>
         ArkInventory.Frame_Changer_Vault_Action_OnClick( self, button, down )
       </OnClick>
-      
-          <OnReceiveDrag>
-              -- do nothing
-          </OnReceiveDrag>
-      
+      <OnReceiveDrag>
+          -- do nothing
+      </OnReceiveDrag>
       <OnEnter>
         ArkInventory.Frame_Changer_Vault_Action_OnEnter( self )
       </OnEnter>
-      
     </Scripts>
-      
   </Button>
   
   
@@ -2137,6 +2119,24 @@
     
   </Frame>
   
+  <Button virtual="true" frameStrata="DIALOG" name="ARKINV_TemplateLocationOverride" inherits="ARKINV_TemplateButton">
+    <NormalTexture file="Interface\Icons\INV_Misc_Bag_07_Green" />
+    <Anchors>
+      <Anchor point="TOPRIGHT" x="-28" y="-2" />
+    </Anchors>
+    <Scripts>
+      <OnEnter>
+        local loc_id = self:GetID( )
+        local text = string.format( ArkInventory.Localise["CONFIG_CONTROL_WITH_ARKINV"], ArkInventory.Const.Program.Name, ArkInventory.Global.Location[loc_id].Name )
+        ArkInventory.GameTooltipSetText( self, text )
+      </OnEnter>
+      <OnClick>
+        local loc_id = self:GetID( )
+        ArkInventory.LocationOverrideSet( loc_id, true )
+      </OnClick>
+    </Scripts>
+  </Button>
+
   
 <!-- ADDON FRAME STARTS HERE -->
   

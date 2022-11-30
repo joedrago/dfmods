@@ -684,7 +684,7 @@ function ArkInventory.ConfigInternalCategoryRuleValidate( id )
 		
 	else
 		
-		ArkInventoryRules.SetObject( { test_rule=true, class="item", loc_id=ArkInventory.Const.Location.Bag, bag_id=1, slot_id=1, count=1, q=1, sb=ArkInventory.Const.Bind.Pickup, h=string.format("item:%s:::::::", HEARTHSTONE_ITEM_ID ) } )
+		ArkInventoryRules.SetObject( { test_rule=true, class="item", loc_id=ArkInventory.Const.Location.Bag, bag_id=1, slot_id=1, count=1, q=1, sb=ArkInventory.ENUM.BIND.PICKUP, h=string.format("item:%s:::::::", HEARTHSTONE_ITEM_ID ) } )
 		
 		local p, pem = loadstring( string.format( "return( %s )", data.formula ) )
 		
@@ -717,6 +717,97 @@ function ArkInventory.ConfigInternalCategoryRuleValidate( id )
 	return ok, em
 	
 end
+
+
+function ArkInventory.ConfigInternalCategoryActionAdd( name )
+	
+	local t = ArkInventory.Const.Category.Type.Action
+	local v = ArkInventory.db.option.category[t]
+	local p, data = ArkInventory.CategoryGetNext( v )
+	
+	if p == -1 then
+		ArkInventory.OutputError( string.format( ArkInventory.Localise["CONFIG_LIST_ADD_LIMIT_DESC"], ArkInventory.Localise["ACTIONS"] ) )
+		return
+	end
+	
+	if p == -2 then
+		ArkInventory.OutputError( string.format( ArkInventory.Localise["CONFIG_LIST_ADD_UPGRADE_DESC"], ArkInventory.Localise["ACTION"] ) )
+		return
+	end
+	
+	data.guid = ArkInventory.GenerateGUID( )
+	data.used = "Y"
+	data.name = string.trim( name )
+	
+	ArkInventory:SendMessage( "EVENT_ARKINV_CONFIG_UPDATE" )
+	
+	
+	return p, data
+	
+end
+
+function ArkInventory.ConfigInternalCategoryActionGet( id, default )
+	
+	local id = id
+	
+	if not default then
+		return ArkInventory.ConfigInternalCategoryGet( ArkInventory.Const.Category.Type.Action, id )
+	end
+	
+	local data = ArkInventory.ConfigInternalCategoryActionGet( id )
+	
+	if not data or data.used ~= "Y" then
+		--ArkInventory.OutputWarning( "design ", id, " requested, status=", data and data.used, ", returning default instead" )
+		id = 9999
+		data = ArkInventory.ConfigInternalCategoryActionGet( id )
+	end
+	
+	return id, data
+	
+end
+
+function ArkInventory.ConfigInternalCategoryActionDelete( id )
+	
+	local data = ArkInventory.ConfigInternalCategoryActionGet( id )
+	data.used = "D"
+	
+	ArkInventory:SendMessage( "EVENT_ARKINV_CONFIG_UPDATE" )
+	
+end
+
+function ArkInventory.ConfigInternalCategoryActionRestore( id )
+	
+	local data = ArkInventory.ConfigInternalCategoryActionGet( id )
+	data.used = "Y"
+	
+	ArkInventory:SendMessage( "EVENT_ARKINV_CONFIG_UPDATE" )
+	
+end
+
+function ArkInventory.ConfigInternalCategoryActionRename( id, name )
+	
+	local data = ArkInventory.ConfigInternalCategoryActionGet( id )
+	data.name = string.trim( name )
+	
+end
+
+function ArkInventory.ConfigInternalCategoryActionCopyFrom( src_id, dst_id )
+	local data = ArkInventory.db.option.category[ArkInventory.Const.Category.Type.Action].data
+	data = ArkInventory.ConfigInternalGenericCopyFrom( data, src_id, dst_id )
+	return data
+end
+
+function ArkInventory.ConfigInternalCategoryActionPurge( id )
+	
+	local data = ArkInventory.ConfigInternalCategoryActionCopyFrom( 0, id )
+	data.guid = false
+	data.used = "N"
+	data.name = ""
+	
+	ArkInventory:SendMessage( "EVENT_ARKINV_CONFIG_UPDATE" )
+	
+end
+
 
 
 function ArkInventory.ConfigInternalSortMethodMoveDown( id, key )
@@ -1367,7 +1458,7 @@ function ArkInventory.ConfigInternalProfileExport( id )
 	
 	
 	if true then
-	
+		
 		local profile = ArkInventory.ConfigInternalProfileGet( id )
 		export.profile = ArkInventory.Table.Copy( profile )
 		
@@ -1377,6 +1468,7 @@ function ArkInventory.ConfigInternalProfileExport( id )
 			export_design( loc.layout )
 			export_catset( loc.catset )
 		end
+		
 	end
 	
 	-- cleanup

@@ -188,8 +188,7 @@ if not L then return end
 --	L["MENU_BAR"] = ""
 	L["MENU_BAR_TITLE"] = "Einstellungen der %1$s. Leiste"
 	L["MENU_BAR_CATEGORY_DESC"] = "Kategorie %1$s dieser Leiste zuordnen"
-	L["MENU_BAR_CATEGORY_CURRENT"] = "aktuell zugeordnet"
-	L["MENU_BAR_CATEGORY_ASSIGN"] = "verf\195\188gbare Kategorien"
+--	L["MENU_BAR_CATEGORY_LABEL"] = ""
 	L["MENU_BAR_CATEGORY_REMOVE_DESC"] = "entfernt %1$s von der Leiste %2$s, wodurch diese wieder zu einer Standardleiste wird" -- 1 Name der Kategorie, 2 Leistennummer
 	L["MENU_BAR_CATEGORY_HIDDEN_DESC"] = "Versteckt eine Kategorie.\n\nGegenst\195\164nde, die sich in einer versteckten Kategorie befinden, werden in der normalen Ansicht nicht angezeigt."
 --	L["MENU_BAR_CATEGORY_MOVE_START_DESC"] = ""
@@ -404,7 +403,6 @@ if not L then return end
 	L["CONFIG_CONTROL_MONITOR_DESC"] = "\195\156berwache \195\132nderungen an den %1$s."
 	L["CONFIG_CONTROL_SAVE_DESC"] = "Speichern der %1$s Daten, so dass man sie auch ansehen kann, wenn man mit einem anderen Charakter spielt oder offline ist."
 --	L["CONFIG_CONTROL_NOTIFY_ERASE_DESC"] = ""
-	L["CONFIG_CONTROL_OVERRIDE"] = "Blizzard Interface austauschen"
 	L["CONFIG_CONTROL_OVERRIDE_DESC"] = "Tauscht das original Blizzard %2$s Interface mit dem von %1$s.\n\nIn abgeschaltetem Zustand wird das standard Blizzard %2$s Interface verwendet.\n\nMan kann in abgeschaltetem Zustand trotzdem das %2$s Interface von %1$s verwenden, aber man muss dann daf\195\188r erst Tastenkombinationen einrichten."
 --	L["CONFIG_CONTROL_SPECIAL_DESC"] = ""
 	L["CONFIG_CONTROL_ANCHOR_LOCK_DESC"] = "verhindert, dass der %1$s Rahmen verschoben werden kann"
@@ -531,6 +529,7 @@ if not L then return end
 --	L["CONFIG_DESIGN_ITEM_COOLDOWN_NUMBER_DESC"] = ""
 --	L["CONFIG_DESIGN_ITEM_COOLDOWN_COMBAT"] = ""
 --	L["CONFIG_DESIGN_ITEM_COOLDOWN_COMBAT_DESC"] = ""
+--	L["CONFIG_DESIGN_ITEM_COOLDOWN_ONOPEN_DESC"] = ""
 	
 	L["CONFIG_DESIGN_ITEM_BORDER_SHOW_DESC"] = "bestimmt, ob ein Rahmen um die Gegenst\195\164nde angezeigt wird"
 	L["CONFIG_DESIGN_ITEM_BORDER_STYLE_DESC"] = "bestimmt die Rahmenart f\195\188r Gegenst\195\164nde"
@@ -572,16 +571,17 @@ if not L then return end
 --	L["CONFIG_ACTION_TYPE"] = ""
 --	L["CONFIG_ACTION_TYPE_DESC"] = ""
 --	L["CONFIG_ACTION_WHEN_DESC"] = ""
+--	L["CONFIG_ACTION_ENABLE_DESC"] = ""
 	
 --	L["CONFIG_ACTION_MANUAL_RUN"] = ""
+--	L["CONFIG_ACTION_TESTMODE"] = ""
 	
 --	L["CONFIG_ACTION_VENDOR_SELL"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_AUTO"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_AUTO_DESC"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_LIMIT"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_LIMIT_DESC"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_LIMIT_ABORT"] = ""
---	L["CONFIG_ACTION_VENDOR_SELL_TEST"] = ""
+--	L["CONFIG_ACTION_VENDOR_AUTOMATIC_DESC"] = ""
+--	L["CONFIG_ACTION_VENDOR_MANUAL_DESC"] = ""
+--	L["CONFIG_ACTION_VENDOR_LIMIT"] = ""
+--	L["CONFIG_ACTION_VENDOR_LIMIT_DESC"] = ""
+--	L["CONFIG_ACTION_VENDOR_LIMIT_ABORT"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOLD"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOLD_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_QUALITY_CUTOFF_DESC"] = ""
@@ -599,13 +599,19 @@ if not L then return end
 --	L["CONFIG_ACTION_VENDOR_TESTMODE"] = ""
 --	L["CONFIG_ACTION_VENDOR_TESTMODE_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_PROCESSING_DISABLED_DESC"] = ""
+	
 --	L["CONFIG_ACTION_VENDOR_SOULBOUND_ALREADY_KNOWN_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOULBOUND_EQUIPMENT_DESC"] = ""
 --	L["CONFIG_ACTION_VENDOR_SOULBOUND_ITEMLEVEL_DESC"] = ""
 	
 --	L["CONFIG_ACTION_MAIL_SEND"] = ""
---	L["CONFIG_ACTION_MAIL_SEND_AUTO"] = ""
---	L["CONFIG_ACTION_MAIL_SEND_AUTO_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_AUTOMATIC_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_MANUAL_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_TESTMODE"] = ""
+--	L["CONFIG_ACTION_MAIL_TESTMODE_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_QUALITY_CUTOFF_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_LIST_DESC"] = ""
+--	L["CONFIG_ACTION_MAIL_TIMER_DESC"] = ""
 	
 	
 -- sorting
@@ -637,6 +643,8 @@ if not L then return end
 	L["CONFIG_SORTING_INCLUDE_ITEMTYPE_DESC"] = "Typ und Subtyp beim Sortieren des Inventars verwenden."
 	L["CONFIG_SORTING_INCLUDE_CATEGORY"] = "Kategorie"
 	L["CONFIG_SORTING_INCLUDE_CATEGORY_DESC"] = "Die Kategorie eines Gegenstandes beim Sortieren des Inventars verwenden."
+--	L["CONFIG_SORTING_INCLUDE_CATNAME"] = ""
+--	L["CONFIG_SORTING_INCLUDE_CATNAME_DESC"] = ""
 	L["CONFIG_SORTING_INCLUDE_ITEMUSELEVEL"] = "Verwendbarkeitsstufe"
 	L["CONFIG_SORTING_INCLUDE_ITEMUSELEVEL_DESC"] = "Die Stufe, ab der ein Gegenstand verwendet werden kann, bestimmt die Sortierreihenfolge."
 	L["CONFIG_SORTING_INCLUDE_ITEMSTATLEVEL"] = "Gegenstandsstufe"
@@ -683,9 +691,8 @@ if not L then return end
 	
 	L["CONFIG_RULE_SHOWDISABLED"] = "deaktivierte Regeln anzeigen"
 	L["CONFIG_RULE_SHOWDISABLED_DESC"] = "bestimmt, ob deaktivierte Regeln angezeigt werden sollen"
---	L["CONFIG_RULE_WIDTH_DESC"] = ""
---	L["CONFIG_RULE_ROWS"] = ""
---	L["CONFIG_RULE_ROWS_DESC"] = ""
+--	L["CONFIG_LIST_WIDTH_DESC"] = ""
+--	L["CONFIG_LIST_ROWS_DESC"] = ""
 	
 --	L["CONFIG_CATEGORY_CUSTOM"] = ""
 	L["CONFIG_CATEGORY_CUSTOM_PLURAL"] = "Eigene Kategorien"
@@ -823,6 +830,7 @@ if not L then return end
 	L["ANCHOR"] = "Position"
 	L["ANCHOR_TEXT1"] = "legt die Position fest" -- window name  (bags, bank, vault)
 	L["ANCHOR_TEXT2"] = "positioniert %1$s %2$s" -- object name (bars, items)
+--	L["ANCHOR_TEXT3"] = ""
 	L["BORDER_DESC"] = "Rahmen-Einstellungen"
 	L["FILE"] = "Datei"
 	L["HEIGHT"] = "H\195\182he"
@@ -839,7 +847,8 @@ if not L then return end
 	L["DIRECTION"] = "Richtung"
 	L["ASCENDING"] = "aufsteigend"
 	L["DESCENDING"] = "absteigend"
-	L["LOCATION"] = "Position"
+--	L["LOCATION"] = ""
+--	L["LOCATIONS"] = ""
 --	L["DHMS"] = ""
 --	L["RANDOM"] = ""
 	L["RELOAD"] = "Neu laden"
@@ -903,6 +912,13 @@ if not L then return end
 --	L["AZERITE"] = ""
 --	L["COSMETIC"] = ""
 --	L["WHEN"] = ""
+--	L["RECIPIENT"] = ""
+--	L["ACTIONS"] = ""
+--	L["ROWS"] = ""
+--	L["DESTINATION"] = ""
+--	L["ASSIGNED"] = ""
+--	L["ASSIGNABLE"] = ""
+--	L["OVERRIDE"] = ""
 	
 	
 -- libdatabroker
