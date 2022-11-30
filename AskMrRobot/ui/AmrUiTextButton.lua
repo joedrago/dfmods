@@ -212,6 +212,7 @@ Constructor
 local function Constructor()
 	local name = "AmrUiTextButton" .. AceGUI:GetNextWidgetNum(Type)
 	local frame = CreateFrame("Button", name, UIParent, "SecureActionButtonTemplate")
+	frame:RegisterForClicks("AnyUp", "AnyDown")
 	frame:Hide()
 	
 	local txt = frame:CreateFontString()

@@ -190,6 +190,9 @@ function Amr.CreateItemLink(itemObj)
     if itemObj.stat2 and itemObj.stat2 ~= 0 then
         propCount = propCount + 1
     end
+    if itemObj.craftQuality and itemObj.craftQuality ~= 0 then
+        propCount = propCount + 1
+    end
 
     if propCount > 0 then
         table.insert(parts, propCount)
@@ -204,6 +207,10 @@ function Amr.CreateItemLink(itemObj)
         if itemObj.stat2 and itemObj.stat2 ~= 0 then
             table.insert(parts, 30)
             table.insert(parts, itemObj.stat2)
+        end
+        if itemObj.craftQuality and itemObj.craftQuality ~= 0 then
+            table.insert(parts, 38)
+            table.insert(parts, itemObj.craftQuality)
         end
     else
         table.insert(parts, 0) -- no props

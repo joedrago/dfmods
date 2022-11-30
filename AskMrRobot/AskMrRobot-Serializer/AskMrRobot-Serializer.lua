@@ -1,6 +1,6 @@
 -- AskMrRobot-Serializer will serialize and communicate character data between users.
 
-local MAJOR, MINOR = "AskMrRobot-Serializer", 115
+local MAJOR, MINOR = "AskMrRobot-Serializer", 118
 local Amr, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not Amr then return end -- already loaded by something else
@@ -244,6 +244,7 @@ function Amr.ParseItemLink(itemLink)
 	item.level = 0
 	item.stat1 = 0
 	item.stat2 = 0
+	item.craftQuality = 0
 
 	-- part 14 + numBonuses, seems to be the number of prop-value "pairs" that will follow,
 	-- for now we just parse the properties that we care about
@@ -258,6 +259,8 @@ function Amr.ParseItemLink(itemLink)
 				item.stat1 = propVal
 			elseif prop == 30 then
 				item.stat2 = propVal
+			elseif prop == 38 then
+				item.craftQuality = propVal
 			end
 		end
 	end
@@ -323,6 +326,9 @@ function Amr.GetItemUniqueId(item, noUpgrade, noAzeriteEmpoweredBonusId)
 	end
 	if item.stat2 and item.stat2 ~= 0 then
 		ret = ret .. "k" .. item.stat2
+	end
+	if item.craftQuality and item.craftQuality ~= 0 then
+		ret = ret .. "l" .. item.craftQuality
 	end
     return ret
 end
@@ -643,6 +649,9 @@ local function appendItemsToExport(fields, itemObjects)
 		end
 		if itemData.stat2 and itemData.stat2 ~= 0 then
 			table.insert(itemParts, "k" .. itemData.stat2)
+		end
+		if itemData.craftQuality and itemData.craftQuality ~= 0 then
+			table.insert(itemParts, "l" .. itemData.craftQuality)
 		end
 
 		--[[
