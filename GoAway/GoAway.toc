@@ -1,4 +1,4 @@
-## Interface: 100000
+## Interface: 100002
 ## Title: GoAway
 ## Notes: Hides stuff in the default UI that I don't want to see.
 ## Version: 1.0
