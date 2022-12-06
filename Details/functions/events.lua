@@ -4,7 +4,8 @@
 	local _detalhes = _G._detalhes
 	local Loc = LibStub("AceLocale-3.0"):GetLocale ( "Details" )
 	local _
-	
+	local addonName, Details222 = ...
+
 	--Event types:
 	_detalhes.RegistredEvents = {
 		--instances
@@ -24,6 +25,7 @@
 			["DETAILS_OPTIONS_MODIFIED"] = {},
 			["UNIT_SPEC"] = {},
 			["UNIT_TALENTS"] = {},
+			["PLAYER_TARGET"] = {},
 		
 		--data
 			["DETAILS_DATA_RESET"] = {},
@@ -120,13 +122,14 @@ local common_events = {
 	["COMM_EVENT_SENT"] = true,
 	["UNIT_SPEC"] = true,
 	["UNIT_TALENTS"] = true,
+	["PLAYER_TARGET"] = true,
 
 }
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --register a event
 
-	function _detalhes:RegisterEvent (object, event, func)
+	function _detalhes:RegisterEvent(object, event, func)
 
 		if (not _detalhes.RegistredEvents [event]) then
 			if (object.Msg) then
@@ -391,8 +394,8 @@ local common_events = {
 	local listener_meta = setmetatable({}, _detalhes)
 	listener_meta.__index = listener_meta
 	
-	function listener_meta:RegisterEvent (event, func)
-		return _detalhes:RegisterEvent (self, event, func)
+	function listener_meta:RegisterEvent(event, func)
+		return _detalhes:RegisterEvent(self, event, func)
 	end
 	function listener_meta:UnregisterEvent (event)
 		return _detalhes:UnregisterEvent (self, event)

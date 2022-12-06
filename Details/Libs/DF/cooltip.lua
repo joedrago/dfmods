@@ -15,7 +15,7 @@ local max = math.max
 
 --api locals
 local PixelUtil = PixelUtil or DFPixelUtil
-local version = 6
+local version = 8
 
 local CONST_MENU_TYPE_MAINMENU = "main"
 local CONST_MENU_TYPE_SUBMENU = "sub"
@@ -27,6 +27,8 @@ function DF:CreateCoolTip()
 	if (_G.GameCooltip2 and _G.GameCooltip2.version >= version) then
 		return
 	end
+
+	local maxStatusBarValue = 100000000
 
 	local defaultBackdrop = {bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1,
 	tile = true, tileSize = 16, insets = {left = 0, right = 0, top = 0, bottom = 0}}
@@ -62,6 +64,24 @@ function DF:CreateCoolTip()
 		end
 
 		return CONST_MENU_TYPE_MAINMENU
+	end
+
+	gameCooltip.LanguageEditBox = gameCooltip.LanguageEditBox or CreateFrame("editbox")
+	gameCooltip.LanguageEditBox:SetFontObject("GameFontNormal")
+	gameCooltip.LanguageEditBox:ClearFocus()
+	gameCooltip.LanguageEditBox:SetAutoFocus(false)
+
+	function gameCooltip.CheckNeedNewFont(text)
+		--local file = gameCooltip.LanguageEditBox:GetFont()
+		--print("1", file, text)
+		--gameCooltip.LanguageEditBox:SetText("Цены аукциона")
+		--local file2 = gameCooltip.LanguageEditBox:GetFont()
+		--print("2", file2)
+		--gameCooltip.LanguageEditBox:ClearFocus()
+
+		--if (file ~= file2) then
+		--	gameCooltip:SetOption("TextFont", file2)
+		--end
 	end
 
 	--containers
@@ -142,6 +162,16 @@ function DF:CreateCoolTip()
 		["SelectedBottomAnchorMod"] = true,
 		["SelectedLeftAnchorMod"] = true,
 		["SelectedRightAnchorMod"] = true,
+
+		["SparkTexture"] = true,
+		["SparkHeightOffset"] = true,
+		["SparkWidthOffset"] = true,
+		["SparkHeight"] = true,
+		["SparkWidth"] = true,
+		["SparkAlpha"] = true,
+		["SparkColor"] = true,
+		["SparkPositionXOffset"] = true,
+		["SparkPositionYOffset"] = true,
 	}
 
 	gameCooltip.AliasList = {
@@ -528,6 +558,9 @@ function DF:CreateCoolTip()
 		statusbar.spark:SetBlendMode("ADD")
 		statusbar.spark:SetSize(12, 24)
 		statusbar.spark:SetPoint("LEFT", statusbar, "RIGHT", -20, -1)
+		statusbar.spark.originalWidth = 12
+		statusbar.spark.originalHeight = 24
+		statusbar.spark.originalTexture = "Interface\\CastingBar\\UI-CastingBar-Spark"
 
 		statusbar.background = statusbar:CreateTexture("$parent_Background", "ARTWORK")
 		statusbar.background:Hide()
@@ -1036,30 +1069,91 @@ function DF:CreateCoolTip()
 
 		--left icon
 		if (leftIconSettings and leftIconSettings[1]) then
-			menuButton.leftIcon:SetTexture(leftIconSettings[1])
-			menuButton.leftIcon:SetWidth(leftIconSettings[2])
-			menuButton.leftIcon:SetHeight(leftIconSettings[3])
-			menuButton.leftIcon:SetTexCoord(leftIconSettings[4], leftIconSettings[5], leftIconSettings[6], leftIconSettings[7])
+			local textureObject = menuButton.leftIcon
 
-			local colorRed, colorGreen, colorBlue, colorAlpha = DF:ParseColors(leftIconSettings[8])
-			menuButton.leftIcon:SetVertexColor(colorRed, colorGreen, colorBlue, colorAlpha)
+			--check if the texture passed is a texture object
+			if (type(leftIconSettings[1]) == "table" and leftIconSettings[1].GetObjectType and leftIconSettings[1]:GetObjectType() == "Texture") then
+				menuButton.leftIcon:SetSize(leftIconSettings[2], leftIconSettings[3])
+				menuButton.leftIcon:SetColorTexture(0.0156, 0.047, 0.1215, 1)
+				textureObject = leftIconSettings[1]
+				textureObject:SetParent(menuButton.leftIcon:GetParent())
+				textureObject:ClearAllPoints()
+				textureObject:SetDrawLayer("overlay", 7)
+				textureObject:Show()
 
-			if (gameCooltip.OptionsTable.IconBlendMode) then
-				menuButton.leftIcon:SetBlendMode(gameCooltip.OptionsTable.IconBlendMode)
+				for i = 1, menuButton.leftIcon:GetNumPoints() do
+					local anchor1, anchorFrame, anchor2, x, y = menuButton.leftIcon:GetPoint(i)
+					textureObject:SetPoint(anchor1, anchorFrame, anchor2, x, y)
+				end
+
+				menuButton.customLeftTexture = textureObject
 			else
-				menuButton.leftIcon:SetBlendMode("BLEND")
+				if (menuButton.customLeftTexture) then
+					menuButton.customLeftTexture:Hide()
+					menuButton.customLeftTexture = nil
+				end
+
+				menuButton.leftIcon:Show()
+				menuButton.leftIcon:SetTexture(leftIconSettings[1])
 			end
 
-			menuButton.leftIcon:SetDesaturated(leftIconSettings[9])
+			textureObject:SetWidth(leftIconSettings[2])
+			textureObject:SetHeight(leftIconSettings[3])
+			textureObject:SetTexCoord(leftIconSettings[4], leftIconSettings[5], leftIconSettings[6], leftIconSettings[7])
+
+			local colorRed, colorGreen, colorBlue, colorAlpha = DF:ParseColors(leftIconSettings[8])
+			textureObject:SetVertexColor(colorRed, colorGreen, colorBlue, colorAlpha)
+
+			if (gameCooltip.OptionsTable.IconBlendMode) then
+				textureObject:SetBlendMode(gameCooltip.OptionsTable.IconBlendMode)
+			else
+				textureObject:SetBlendMode("BLEND")
+			end
+
+			textureObject:SetDesaturated(leftIconSettings[9])
 		else
-			menuButton.leftIcon:SetTexture("")
-			menuButton.leftIcon:SetWidth(1)
-			menuButton.leftIcon:SetHeight(1)
+			local textureObject = menuButton.leftIcon
+			textureObject:SetTexture("")
+			textureObject:SetWidth(1)
+			textureObject:SetHeight(1)
+
+			if (menuButton.customLeftTexture) then
+				menuButton.customLeftTexture:Hide()
+				menuButton.customLeftTexture = nil
+			end
 		end
 
 		--right icon
 		if (rightIconSettings and rightIconSettings[1]) then
-			menuButton.rightIcon:SetTexture(rightIconSettings[1])
+			local textureObject = menuButton.rightIcon
+
+			--check if the texture passed is a texture object
+			if (type(rightIconSettings[1]) == "table" and rightIconSettings[1].GetObjectType and rightIconSettings[1]:GetObjectType() == "Texture") then
+				menuButton.rightIcon:SetSize(leftIconSettings[2], leftIconSettings[3])
+				menuButton.rightIcon:SetColorTexture(0.0156, 0.047, 0.1215, 1)
+
+				textureObject = rightIconSettings[1]
+				textureObject:SetParent(menuButton)
+				textureObject:ClearAllPoints()
+				textureObject:SetDrawLayer("overlay", 7)
+				textureObject:Show()
+
+				for i = 1, menuButton.rightIcon:GetNumPoints() do
+					local anchor1, anchorFrame, anchor2, x, y = menuButton.rightIcon:GetPoint(i)
+					textureObject:SetPoint(anchor1, anchorFrame, anchor2, x, y)
+				end
+
+				menuButton.customRightTexture = textureObject
+			else
+				if (menuButton.customRightTexture) then
+					menuButton.customRightTexture:Hide()
+					menuButton.customRightTexture = nil
+				end
+
+				menuButton.rightIcon:Show()
+				menuButton.rightIcon:SetTexture(rightIconSettings[1])
+			end
+
 			menuButton.rightIcon:SetWidth(rightIconSettings[2])
 			menuButton.rightIcon:SetHeight(rightIconSettings[3])
 			menuButton.rightIcon:SetTexCoord(rightIconSettings[4], rightIconSettings[5], rightIconSettings[6], rightIconSettings[7])
@@ -1078,6 +1172,11 @@ function DF:CreateCoolTip()
 			menuButton.rightIcon:SetTexture("")
 			menuButton.rightIcon:SetWidth(1)
 			menuButton.rightIcon:SetHeight(1)
+
+			if (menuButton.customRightTexture) then
+				menuButton.customRightTexture:Hide()
+				menuButton.customRightTexture = nil
+			end
 		end
 
 		--overwrite icon size
@@ -1133,15 +1232,31 @@ function DF:CreateCoolTip()
 	end
 
 	function gameCooltip:RefreshSpark(menuButton)
+		local sparkTexture = gameCooltip.OptionsTable.SparkTexture or menuButton.spark.originalTexture
+		local sparkAlpha = gameCooltip.OptionsTable.SparkAlpha or 1
+		local sparkColor = gameCooltip.OptionsTable.SparkColor or "white"
+
+		local sparkWidth = gameCooltip.OptionsTable.SparkWidth or menuButton.spark.originalWidth
+		local sparkHeight = gameCooltip.OptionsTable.SparkHeight or menuButton.spark.originalHeight
+		local sparkWidthOffset = gameCooltip.OptionsTable.SparkWidthOffset or 0
+		local sparkHeightOffset = gameCooltip.OptionsTable.SparkHeightOffset or  0
+		local positionXOffset = gameCooltip.OptionsTable.SparkPositionXOffset or 0
+		local positionYOffset = gameCooltip.OptionsTable.SparkPositionYOffset or 0
+
+		menuButton.spark:SetSize(sparkWidth + sparkWidthOffset, sparkHeight + sparkHeightOffset)
+		menuButton.spark:SetTexture(sparkTexture)
+		menuButton.spark:SetVertexColor(DF:ParseColors(sparkColor))
+		menuButton.spark:SetAlpha(sparkAlpha)
+
 		menuButton.spark:ClearAllPoints()
-		menuButton.spark:SetPoint("left", menuButton.statusbar, "left", (menuButton.statusbar:GetValue() * (menuButton.statusbar:GetWidth() / 100)) - 5, 0)
+		menuButton.spark:SetPoint("left", menuButton.statusbar, "left", (menuButton.statusbar:GetValue() * (menuButton.statusbar:GetWidth() / 100)) - 5 + positionXOffset, 0 + positionYOffset)
 		menuButton.spark2:ClearAllPoints()
-		menuButton.spark2:SetPoint("left", menuButton.statusbar, "left", menuButton.statusbar:GetValue() * (menuButton.statusbar:GetWidth()/100) - 16, 0)
+		menuButton.spark2:SetPoint("left", menuButton.statusbar, "left", menuButton.statusbar:GetValue() * (menuButton.statusbar:GetWidth()/100) - 16 + positionXOffset, 0 + positionYOffset)
 	end
 
 	function gameCooltip:StatusBar(menuButton, statusBarSettings)
 		if (statusBarSettings) then
-			menuButton.statusbar:SetValue(statusBarSettings[1])
+			menuButton.statusbar:SetValue(Clamp(statusBarSettings[1], 0, maxStatusBarValue))
 			menuButton.statusbar:SetStatusBarColor(statusBarSettings[2], statusBarSettings[3], statusBarSettings[4], statusBarSettings[5])
 			menuButton.statusbar:SetHeight(20 + (gameCooltip.OptionsTable.StatusBarHeightMod or 0))
 
@@ -1153,7 +1268,7 @@ function DF:CreateCoolTip()
 			end
 
 			if (statusBarSettings[7]) then
-				menuButton.statusbar2:SetValue(statusBarSettings[7].value)
+				menuButton.statusbar2:SetValue(Clamp(statusBarSettings[7].value, 0, maxStatusBarValue))
 				menuButton.statusbar2.texture:SetTexture(statusBarSettings[7].texture or [[Interface\RaidFrame\Raid-Bar-Hp-Fill]])
 				if (statusBarSettings[7].specialSpark) then
 					menuButton.spark2:Show()
@@ -2735,6 +2850,8 @@ function DF:CreateCoolTip()
 			end
 		end
 
+		gameCooltip.CheckNeedNewFont(leftText)
+
 		local rightTextType = type(rightText)
 		if (rightTextType ~= "string") then
 			if (rightTextType == "number") then
@@ -2743,6 +2860,8 @@ function DF:CreateCoolTip()
 				rightText = ""
 			end
 		end
+
+		gameCooltip.CheckNeedNewFont(rightText)
 
 		if (type(ColorR1) ~= "number") then
 			ColorR2, ColorG2, ColorB2, ColorA2, fontSize, fontFace, fontFlag = ColorG1, ColorB1, ColorA1, ColorR2, ColorG2, ColorB2, ColorA2
@@ -2995,6 +3114,37 @@ function DF:CreateCoolTip()
 		gameCooltip.Host = nil
 		DF:FadeFrame(frame1, 1)
 		DF:FadeFrame(frame2, 1)
+
+		--release custom icon texture objects, these are TextureObject passed with AddIcon() instead of a texture path or textureId
+		for i = 1, #frame1.Lines do
+			local menuButton = frame1.Lines[i]
+
+			--relase custom icon texture if any
+			if (menuButton.customLeftTexture) then
+				menuButton.customLeftTexture:ClearAllPoints()
+				menuButton.customLeftTexture = nil
+			end
+
+			if (menuButton.customRightTexture) then
+				menuButton.customRightTexture:ClearAllPoints()
+				menuButton.customRightTexture = nil
+			end
+		end
+
+		for i = 1, #frame2.Lines do
+			local menuButton = frame2.Lines[i]
+
+			--relase custom icon texture if any
+			if (menuButton.customLeftTexture) then
+				menuButton.customLeftTexture:ClearAllPoints()
+				menuButton.customLeftTexture = nil
+			end
+
+			if (menuButton.customRightTexture) then
+				menuButton.customRightTexture:ClearAllPoints()
+				menuButton.customRightTexture = nil
+			end
+		end
 	end
 
 	--old function call
