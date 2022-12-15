@@ -1,0 +1,24 @@
+commit efcac79f185a81e6de11515c4cd269131364d41f
+Author: GurliGebis <GurliGebis@users.noreply.github.com>
+Date:   Tue Nov 29 11:36:51 2022 +0100
+
+    Added package.yml
+
+commit 98bc11402cf565b39a3b299497d120db246c96b8
+Author: Bjarke Istrup Pedersen <gurli@gurlinet.dk>
+Date:   Fri Nov 11 09:55:22 2022 +0100
+
+    Updates for Dragonflight
+
+commit 6bab27699f0002ebbc82452b67bc0f2ab3edb487
+Author: Bjarke Istrup Pedersen <gurli@gurlinet.dk>
+Date:   Fri Nov 11 09:55:06 2022 +0100
+
+    Cleanup
+
+commit 078ab0ea85bc1bf72253f02f86b84b768cd76464
+Author: Bjarke Istrup Pedersen <gurli@gurlinet.dk>
+Date:   Fri Nov 11 09:46:34 2022 +0100
+
+    Import from Curseforge
+
