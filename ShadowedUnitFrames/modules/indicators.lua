@@ -244,7 +244,9 @@ end
 -- Ready check fading once the check complete
 local function fadeReadyStatus(self, elapsed)
 	self.timeLeft = self.timeLeft - elapsed
-	self.ready:SetAlpha(self.timeLeft / self.startTime)
+	local fadeLevel = (self.timeLeft / self.startTime)
+	if fadeLevel > 1 then fadeLevel = 1 elseif fadeLevel < 0 then fadeLevel = 0 end
+	self.ready:SetAlpha(fadeLevel)
 
 	if( self.timeLeft <= 0 ) then
 		self:SetScript("OnUpdate", nil)
@@ -273,7 +275,10 @@ function Indicators:UpdateReadyCheck(frame, event)
 					hasTimer = true
 
 					f.fadeList[fadeFrame] = timeLeft - elapsed
-					fadeFrame:SetAlpha(f.fadeList[fadeFrame] / FADEOUT_TIME)
+
+					local fadeLevel = (f.fadeList[fadeFrame] / FADEOUT_TIME)
+					if fadeLevel > 1 then fadeLevel = 1 elseif fadelevel < 0 then fadeLevel = 0 end
+					fadeFrame:SetAlpha(fadeLevel)
 
 					if( f.fadeList[fadeFrame] <= 0 ) then
 						f.fadeList[fadeFrame] = nil
