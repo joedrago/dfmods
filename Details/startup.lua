@@ -13,6 +13,12 @@ function Details:StartMeUp() --I'll never stop!
 	Details.lastArenaStartTime = GetTime()
 	Details.lastBattlegroundStartTime = GetTime()
 
+	--save the time when the addon finished loading
+	Details.AddOnStartTime = GetTime()
+	function Details.GetStartupTime()
+		return Details.AddOnStartTime or GetTime()
+	end
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --row single click, this determines what happen when the user click on a bar
 
@@ -48,19 +54,6 @@ function Details:StartMeUp() --I'll never stop!
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --initialize
-	C_Timer.After(2, function()
-		--test libOpenRaid deprecated code
-		--[=[
-		local openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
-		openRaidLib.playerInfoManager.GetPlayerInfo()
-		openRaidLib.RequestAllPlayersInfo()
-		openRaidLib.playerInfoManager.GetAllPlayersInfo()
-		openRaidLib.gearManager.GetAllPlayersGear()
-		openRaidLib.gearManager.GetPlayerGear()
-		openRaidLib.cooldownManager.GetAllPlayersCooldown()
-		openRaidLib.cooldownManager.GetPlayerCooldowns()
-		--]=]
-	end)
 
 	--plugin container
 	self:CreatePluginWindowContainer()
@@ -493,12 +486,6 @@ function Details:StartMeUp() --I'll never stop!
 	--embed windows on the chat window
 	Details.chat_embed:CheckChatEmbed(true)
 
-	--save the time when the addon finished loading
-	Details.AddOnStartTime = GetTime()
-	function Details.GetStartupTime()
-		return Details.AddOnStartTime or GetTime()
-	end
-
 	if (Details.player_details_window.skin ~= "ElvUI") then
 		local setDefaultSkinOnPlayerBreakdownWindow = function()
 			Details:ApplyPDWSkin("ElvUI")
@@ -537,7 +524,7 @@ function Details:StartMeUp() --I'll never stop!
 
 	if (not Details.slash_me_used) then
 		if (math.random(25) == 1) then
-			Details:Msg("use '/details me' macro to open the player breakdown for you!")
+			--Details:Msg("use '/details me' macro to open the player breakdown for you!")
 		end
 	end
 
@@ -568,7 +555,7 @@ function Details:StartMeUp() --I'll never stop!
 	if (not DetailsFramework.IsTimewalkWoW()) then
 		--wipe overall on torghast - REMOVE ON 10.0
 		local torghastTracker = CreateFrame("frame")
-		torghastTracker:RegisterEvent("JAILERS_TOWER_LEVEL_UPDATE")
+		torghastTracker:RegisterEvent("JAILERS_TOWER_LEVEL_UPDATE") --shadowlands tower challenge
 		torghastTracker:SetScript("OnEvent", function(self, event, level, towerType)
 			if (level == 1) then
 				if (Details.overall_clear_newtorghast) then
