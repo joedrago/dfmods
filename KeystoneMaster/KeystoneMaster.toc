@@ -1,0 +1,7 @@
+## Interface: 100002
+## Title: KeystoneMaster
+## Notes: Helps you figure out which keys to run to achieve KSM/KSH, rewritten from MythicPlusRatingGain
+## Version: 1.0
+## DefaultState: enabled
+## Author: Monza
+KeystoneMaster.lua
