@@ -550,6 +550,26 @@ function PGF.DoFilterSearchResults(results)
         env.sl     = sldungeon or slraid
         env.df     = dfdungeon or dfraid
 
+        env.latin = false
+        if searchResultInfo.leaderName and searchResultInfo.leaderName ~= "" then
+            if
+                searchResultInfo.leaderName:find('-Ragnaros') ~= nil or
+                searchResultInfo.leaderName:find('-Azralon') ~= nil or
+                searchResultInfo.leaderName:find('-Quel\'Thalas') ~= nil
+            then
+                env.latin = true
+            end
+        end
+
+        env.sweat = false
+        if searchResultInfo.leaderName and searchResultInfo.leaderName ~= "" then
+            if
+                searchResultInfo.leaderName:find('-Tichondrius') ~= nil
+            then
+                env.sweat = true
+            end
+        end
+
         PGF.PutRaiderIOAliases(env)
         if PGF.PutRaiderIOMetrics then
             PGF.PutRaiderIOMetrics(env, searchResultInfo.leaderName)
