@@ -1,0 +1,7 @@
+## Interface: 100002
+## Title: M+ Rating Gain
+## Notes: Calculates your M+ rating gain for dungeons you time at a given key level this week
+## Version: 1.5
+## DefaultState: enabled
+## Author: msanity
+MythicPlusRatingGain.lua
